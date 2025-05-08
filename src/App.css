@@ -28,6 +28,96 @@
   color: #61dafb;
 }
 
+.sample-canvas {
+  width: 800px;
+  height: 800px;
+}
+
+.game-container {
+  text-align: center;
+  margin-top: 50px;
+  font-family: Arial, sans-serif;
+}
+
+.plant {
+  width: 100px;
+  height: 150px;
+  margin: 0 auto;
+  background: green;
+  border-radius: 50% 50% 0 0;
+  transition: transform 0.3s, filter 0.3s;
+}
+
+/* Plant states */
+.happy {
+  transform: scale(1.1);
+  filter: brightness(1.1);
+}
+
+.drooping {
+  transform: rotate(10deg);
+  filter: brightness(0.7);
+}
+
+.thirsty {
+  transform: scale(0.9);
+  filter: grayscale(1);
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.sun-wrapper {
+  margin-top: 20px;
+}
+
+.sun {
+  font-size: 40px;
+  cursor: grab;
+}
+
+.sun:active {
+  cursor: grabbing;
+}
+
+.dead-leaf {
+  font-size: 30px;
+  cursor: pointer;
+  margin: 10px;
+}
+
+.nutrients {
+  margin-top: 20px;
+}
+
+.nutrients button {
+  margin: 5px;
+  padding: 10px;
+  font-size: 14px;
+}
+
+.popup {
+  margin-top: 20px;
+  padding: 10px;
+  background: #f0f4c3;
+  border: 1px solid #cddc39;
+  display: inline-block;
+  border-radius: 8px;
+  animation: fadeInOut 3s ease-in-out;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateY(-10px); }
+  10% { opacity: 1; transform: translateY(0); }
+  90% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-10px); }
+}
+
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
