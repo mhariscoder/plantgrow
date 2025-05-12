@@ -8,10 +8,11 @@ import { FaRegHeart, FaBrain, FaHandshake, FaPeopleCarry } from 'react-icons/fa'
 
 function App() {
   const sunRef = useRef(null);
+  const sunContainerRef = useRef(null);
   const [stemHeight, setStemHeight] = useState(0);
   const [plant, setPlant] = useState([]);
-  const [waterLevel, setWaterLevel] = useState(50);
-  const [sunlightLevel, setSunlightLevel] = useState(50);
+  const [waterLevel, setWaterLevel] = useState(0);
+  const [sunlightLevel, setSunlightLevel] = useState(0);
   const [plantHealth, setPlantHealth] = useState('neutral');
   const [deadLeaves, setDeadLeaves] = useState(3);
   const [showPopup, setShowPopup] = useState(false);
@@ -32,22 +33,40 @@ function App() {
   };
 
   const handleSunDrag = (e, data) => {
-    let newSunlight = Math.min(Math.max(sunlightLevel + data.deltaY * -0.5, 0), 100);
-    setSunlightLevel(newSunlight);
-    evaluatePlant(waterLevel, newSunlight);
+    const container = sunContainerRef.current;
+    const sun = sunRef.current;
+  
+    if (container && sun) {
+      const containerHeight = container.offsetHeight;
+      const sunTop = data.y;
+  
+      let level = 100 - (sunTop / (containerHeight - sun.offsetHeight)) * 100;
+  
+      level = Math.min(Math.max(level, 0), 100);
+  
+      setSunlightLevel(level);
+      evaluatePlant(waterLevel, level);
+    }
   };
 
   const evaluatePlant = (water, sun) => {
-    if (water > 70 || sun > 70) {
-      setPlantHealth('drooping');
-      showFeedback('Too much care can be overwhelming.');
-    } else if (water < 30 || sun < 30) {
-      setPlantHealth('thirsty');
-      showFeedback('Neglect causes stagnation.');
-    } else {
-      setPlantHealth('happy');
-      showFeedback('Balance helps everything thrive.');
-    }
+    // actual sun location should be 50
+    if( sun < 10 ) setPlantHealth('drooping');
+    if( sun > 10 && sun < 80 ) setPlantHealth('happy');
+    if( sun > 80 ) setPlantHealth('thirsty');
+    
+
+
+    // if (water > 60 || sun > 60) {
+    //   setPlantHealth('drooping');
+    //   showFeedback('Too much care can be overwhelming.');
+    // } else if (water < 30 || sun < 30) {
+    //   setPlantHealth('thirsty');
+    //   showFeedback('Neglect causes stagnation.');
+    // } else {
+    //   setPlantHealth('happy');
+    //   showFeedback('Balance helps everything thrive.');
+    // }
   };
 
   const showFeedback = (msg) => {
@@ -67,89 +86,148 @@ function App() {
     showFeedback(`Added ${nutrient}. The plant grows stronger.`);
   };
 
-  const increment = () => {
-    setPlant([...plant, {}])
-  }
+  // const handleGrowPlant = () => {
+  //   if(plant?.length <= 11) setPlant([...plant, {
+  //     // style: {height: 0, width: 0}
+  //   }])
+  // }
+
+  const handleGrowPlant = () => {
+    if (plant?.length <= 11) {
+      setPlant((prevPlant) => {
+        const newPlant = [...prevPlant, { style: { height: 0, width: 0 } }];
+        return newPlant;
+      });
+  
+      setTimeout(() => {
+        setPlant((prevPlant) => {
+          const updatedPlant = prevPlant.map((item, index) => {
+            if (index === plant.length) {
+              return { style: {} };
+            }
+            return item;
+          });
+          return updatedPlant;
+        });
+      }, 1000);
+    }
+  };
 
   return (
     <>
       <div className="game-container">
-        <h2>🌱 Plant Care Game</h2>
-        <button onClick={() => increment()}>Increment</button>
-
-        {/* <div className={`plant ${plantHealth}`} /> */}
-
-        <div class="box">
-          <div class="stem" style={{
-            height: stemHeight
-          }}>
-            {
-              plant?.map((item, key) => (
-                <>
-                  <div className={`${plantHealth} leaf`} style={{
-                    bottom: `${((stemHeight/plant?.length * key) + 30)}px`,
-                    ...(key % 2 === 1 && { rotate: `25deg` }), 
-                    ...(key % 2 !== 1 && { rotate: `-25deg` }),
-                    ...(key % 2 === 1 && { right: '0' }), 
-                    ...(key % 2 !== 1 && { left: '0' })
-                  }}>
-                    <div className="line"></div>
-                  </div>
-                </>
-              ))
-            }
-
-            {/* <div class={`${plantHealth} leaf leaf01`}>
-                <div class="line"></div>
-            </div>
-            <div class={`${plantHealth} leaf leaf02`}>
-                <div class="line"></div>
-            </div>
-            <div class={`${plantHealth} leaf leaf03`}>
-                <div class="line"></div>
-            </div>
-            <div class={`${plantHealth} leaf leaf04`}>
-                <div class="line"></div>
-            </div>
-            <div class={`${plantHealth} leaf leaf05`}>
-                <div class="line"></div>
-            </div>
-            <div class={`${plantHealth} leaf leaf06`}>
-                <div class="line"></div>
-            </div> */}
-          </div>
-          <div class="pot"></div>
-          <div class="pot-top"></div>
-        </div>
-
-        <button onClick={handleWaterPlant}>💧 Water the Plant</button>
-        <p>Water: {Math.round(waterLevel)}% | Sunlight: {Math.round(sunlightLevel)}%</p>
-
-        <Draggable nodeRef={sunRef} axis="y" bounds={{ top: -50, bottom: 50 }} onDrag={handleSunDrag}>
-          <div ref={sunRef}>
-            <div className="sun">☀️</div>
-          </div>
-        </Draggable>
         
-        {Array.from({ length: deadLeaves }, (_, i) => (
-          <div key={i} className="dead-leaf" onClick={pruneLeaves}>
-            🍂
-          </div>
-        ))}
 
-        {/* Nutrients */}
-        <div className="nutrients">
-          <button onClick={() => addNutrient('Empathy')}><FaRegHeart /> Empathy</button>
-          <button onClick={() => addNutrient('Psychological Safety')}><FaBrain /> Safety</button>
-          <button onClick={() => addNutrient('Trust')}><FaHandshake /> Trust</button>
-          <button onClick={() => addNutrient('Support')}><FaPeopleCarry /> Support</button>
+        <div style={{
+          display: 'flex',
+          flex: 1
+        }}>
+          {/* <div className={`plant ${plantHealth}`} /> */}
+
+          <div className="visual-panel">
+            <div ref={sunContainerRef} className="sun-container">
+              <Draggable 
+                nodeRef={sunRef} 
+                // axis="y" 
+                bounds={{ top: 0, bottom: 300 }} 
+                onDrag={handleSunDrag}
+              >
+                <div className="sun" ref={sunRef}>☀️</div>
+              </Draggable>
+            </div>
+            
+            <div className="plant">
+              <div className={`stem ${plantHealth}`} style={{
+                height: stemHeight
+              }}>
+                {
+                  plant?.map((item, key) => (
+                    <>
+                      <div
+                        className={`${plantHealth} leaf`}
+                        style={{
+                          bottom: `${((stemHeight / plant?.length) * key) + 30}px`,
+                          ...(key % 2 === 1 && {
+                            transform: `rotate(25deg)`,
+                            borderTopRightRadius: '50%',
+                            borderTopLeftRadius: '50%',
+                            borderBottomRightRadius: '50%',
+                          }),
+                          ...(key % 2 !== 1 && {
+                            transform: `rotate(-25deg)`,
+                            borderTopRightRadius: '50%',
+                            borderTopLeftRadius: '50%',
+                            borderBottomLeftRadius: '50%',
+                          }),
+                          ...(key % 2 === 1 && { right: '0' }),
+                          ...(key % 2 !== 1 && { left: '0' }),
+                          ...(item?.style || {})
+                        }}
+                      >
+                        <div className="line"></div>
+                      </div>
+                    </>
+                  ))
+                }
+
+                {/* <div class={`${plantHealth} leaf leaf01`}>
+                    <div className="line"></div>
+                </div>
+                <div class={`${plantHealth} leaf leaf02`}>
+                    <div className="line"></div>
+                </div>
+                <div class={`${plantHealth} leaf leaf03`}>
+                    <div className="line"></div>
+                </div>
+                <div class={`${plantHealth} leaf leaf04`}>
+                    <div className="line"></div>
+                </div>
+                <div class={`${plantHealth} leaf leaf05`}>
+                    <div className="line"></div>
+                </div>
+                <div class={`${plantHealth} leaf leaf06`}>
+                    <div className="line"></div>
+                </div> */}
+              </div>
+              <div className="pot"></div>
+              <div className="pot-top"></div>
+            </div>
+          </div>
+        
+          <div className="operational-panel">
+            <button onClick={() => handleGrowPlant()}>Grow Plant</button>
+          </div>
+
+          {/*
+            <button onClick={handleWaterPlant}>💧 Water the Plant</button>
+            <p>Water: {Math.round(waterLevel)}% | Sunlight: {Math.round(sunlightLevel)}%</p>
+
+            <Draggable nodeRef={sunRef} axis="y" bounds={{ top: -50, bottom: 50 }} onDrag={handleSunDrag}>
+              <div ref={sunRef}>
+                <div className="sun">☀️</div>
+              </div>
+            </Draggable>
+            
+            {Array.from({ length: deadLeaves }, (_, i) => (
+              <div key={i} className="dead-leaf" onClick={pruneLeaves}>
+                🍂
+              </div>
+            ))}
+
+            <div className="nutrients">
+              <button onClick={() => addNutrient('Empathy')}><FaRegHeart /> Empathy</button>
+              <button onClick={() => addNutrient('Psychological Safety')}><FaBrain /> Safety</button>
+              <button onClick={() => addNutrient('Trust')}><FaHandshake /> Trust</button>
+              <button onClick={() => addNutrient('Support')}><FaPeopleCarry /> Support</button>
+            </div>
+
+            {showPopup && (
+              <div className="popup">
+                Watering & Sunlight = Feedback & Guidance. {popupMessage}
+              </div>
+            )}
+          */}
         </div>
-
-        {showPopup && (
-          <div className="popup">
-            Watering & Sunlight = Feedback & Guidance. {popupMessage}
-          </div>
-        )}
       </div>
     </>
   );

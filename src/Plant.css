@@ -1,10 +1,22 @@
-.box {
+.game-container {
+	text-align: center;
+	font-family: Arial, sans-serif;
+	height: 100vh;
+	display: flex;
+}
+
+.visual-panel {
 	position:relative;
 	margin:auto;
 	display:block;
 	width:600px;
-	height:600px;
+	height:100vh;
 	background:none;
+}
+
+.operational-panel {
+	position: absolute;
+	right: 0;
 }
 
 .pot {
@@ -23,7 +35,7 @@
 	position:absolute;
 	width:22%;
 	height:25px;
-	bottom:17%;
+	bottom:100px;
 	left:39%;
 	background:#FCAA67;
 	border-top-left-radius: 10px;
@@ -41,8 +53,8 @@
 .leaf {
 	position:absolute;
 	width:700%;
-	height:30px;
-	border-radius:50%;
+	height: 40px;
+	/* border-radius:50%; */
 	background:#008000;
 }
 
@@ -95,6 +107,7 @@
 .stem, .leaf  {
 	animation-duration: 2.2s!important;
 	animation-fill-mode:both;
+	transition: all 0.3s ease;
 }   
 
 .stem.rain {
@@ -167,3 +180,107 @@
 		top:-9%;
 	}
 } 
+
+
+
+/*** sun style ***/
+.sun-container {
+	height: 300px;
+}
+
+.sun {
+	font-size: 100px;
+	cursor: grab;
+	display: inline-flex;
+	position: absolute;
+}
+  
+.sun:active {
+	cursor: grabbing;
+}
+
+
+
+/* .plant {
+  width: 100px;
+  height: 150px;
+  margin: 0 auto;
+  background: green;
+  border-radius: 50% 50% 0 0;
+  transition: transform 0.3s, filter 0.3s;
+} */
+
+/* Plant states */
+.happy {
+	filter: brightness(1.1);
+}
+
+.happy.leaf {
+	transform: scale(1.1);
+}
+
+.drooping {
+	filter: brightness(0.7);
+}
+
+.drooping.leaf {
+	transform: rotate(10deg)!important;
+}
+
+.thirsty {
+	filter: grayscale(1);
+}
+
+.thirsty.leaf {
+	transform: scale(0.9);
+}
+
+button {
+	padding: 10px 20px;
+	font-size: 16px;
+	cursor: pointer;
+	margin-top: 10px;
+}
+
+.dead-leaf {
+	font-size: 30px;
+	cursor: pointer;
+	margin: 10px;
+}
+
+.nutrients {
+	margin-top: 20px;
+}
+
+.nutrients button {
+	margin: 5px;
+	padding: 10px;
+	font-size: 14px;
+}
+
+.popup {
+	margin-top: 20px;
+	padding: 10px;
+	background: #f0f4c3;
+	border: 1px solid #cddc39;
+	display: inline-block;
+	border-radius: 8px;
+	animation: fadeInOut 3s ease-in-out;
+}
+
+@keyframes fadeInOut {
+	0% { opacity: 0; transform: translateY(-10px); }
+	10% { opacity: 1; transform: translateY(0); }
+	90% { opacity: 1; }
+	100% { opacity: 0; transform: translateY(-10px); }
+}
+
+
+@keyframes App-logo-spin {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
+}
