@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import Draggable from 'react-draggable';
 import './App.css';
 import './Plant.css';
+import './Sun.css';
 
 // Nutrient icons
 import { FaRegHeart, FaBrain, FaHandshake, FaPeopleCarry } from 'react-icons/fa';
@@ -53,9 +54,8 @@ function App() {
     // actual sun location should be 50
     if( sun < 10 ) setPlantHealth('drooping');
     if( sun > 10 && sun < 80 ) setPlantHealth('happy');
-    if( sun > 80 ) setPlantHealth('thirsty');
-    
-
+    // if( sun > 80 ) setPlantHealth('thirsty');
+    if( sun > 80 ) setPlantHealth('neutral');
 
     // if (water > 60 || sun > 60) {
     //   setPlantHealth('drooping');
@@ -132,13 +132,28 @@ function App() {
                 bounds={{ top: 0, bottom: 300 }} 
                 onDrag={handleSunDrag}
               >
-                <div className="sun" ref={sunRef}>☀️</div>
+                {/* <div className="sun" ref={sunRef}>☀️</div> */}
+                <div className="sun theSun" ref={sunRef}>
+                  <div className="ray_box">
+                    <div className="ray ray1"></div>
+                    <div className="ray ray2"></div>
+                    <div className="ray ray3"></div>
+                    <div className="ray ray4"></div>
+                    <div className="ray ray5"></div>
+                    <div className="ray ray6"></div>
+                    <div className="ray ray7"></div>
+                    <div className="ray ray8"></div>
+                    <div className="ray ray9"></div>
+                    <div className="ray ray10"></div>
+                  </div>
+                </div>
               </Draggable>
             </div>
             
             <div className="plant">
               <div className={`stem ${plantHealth}`} style={{
-                height: stemHeight
+                height: stemHeight,
+                transform: (plantHealth === 'neutral') ? `none` : `scale(1.2)`,
               }}>
                 {
                   plant?.map((item, key) => (
@@ -148,13 +163,15 @@ function App() {
                         style={{
                           bottom: `${((stemHeight / plant?.length) * key) + 30}px`,
                           ...(key % 2 === 1 && {
-                            transform: `rotate(25deg)`,
+                            // transform: `rotate(25deg)`,
+                            transform: (plantHealth === 'neutral') ? `rotate(25deg)` : `rotate(40deg)`,
                             borderTopRightRadius: '50%',
                             borderTopLeftRadius: '50%',
                             borderBottomRightRadius: '50%',
                           }),
                           ...(key % 2 !== 1 && {
-                            transform: `rotate(-25deg)`,
+                            transform: (plantHealth === 'neutral') ? `rotate(-25deg)` : `rotate(-40deg)`,
+                            // transform: `rotate(-25deg)`,
                             borderTopRightRadius: '50%',
                             borderTopLeftRadius: '50%',
                             borderBottomLeftRadius: '50%',
