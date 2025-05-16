@@ -1,0 +1,204 @@
+  input[type="text"] {
+    background-color: transparent;
+    margin-top: 30px;
+    border: 0;
+    border-bottom: solid 1px #8080ff;
+    text-align: center;
+    font-size: 20px;
+    color: #518bf0;
+    text-shadow: 0 0 3px #518bf0;
+    width: 45px;
+    display: inline-block;
+  }
+  input:focus {
+    outline: 0;
+    border-bottom: dashed 1px #ff8080;
+  }
+  input::-moz-selection {
+    color: #1a1a1a;
+    background-color: #c6e4ee;
+  }
+  input::selection {
+    color: #1a1a1a;
+    background-color: #c6e4ee;
+  }
+  ::-webkit-input-placeholder {
+    color: #7aa6f3;
+    text-shadow: 0 0 3px #7aa6f3;
+  }
+  :-moz-placeholder {
+    color: #7aa6f3;
+    text-shadow: 0 0 3px #7aa6f3;
+  }
+  ::-moz-placeholder {
+    color: #7aa6f3;
+    text-shadow: 0 0 3px #7aa6f3;
+  }
+  :-ms-input-placeholder {
+    color: #7aa6f3;
+    text-shadow: 0 0 3px #7aa6f3;
+  }
+  .wrapper {
+    display: -ms-flexbox;
+    display: box;
+    display: flex;
+    -o-box-align: center;
+    align-items: center;
+    -o-box-pack: center;
+    justify-content: center;
+    -o-box-orient: vertical;
+    flex-direction: column;
+    height: 100%;
+  }
+  .green {
+    margin-top: 15px;
+  }
+  .green .progress,
+  .red .progress,
+  .orange .progress {
+    position: relative;
+    border-radius: 50%;
+  }
+  .green .progress,
+  .red .progress,
+  .orange .progress {
+    width: 150px;
+    height: 150px;
+  }
+  .green .progress {
+    border: 5px solid #53fc53;
+  }
+  .green .progress {
+    box-shadow: 0 0 20px #029502;
+  }
+  .progress {
+    transition: all 1s ease;
+    background-color: #0b5fff;
+  }
+  .progress .inner {
+    position: absolute;
+    overflow: hidden;
+    z-index: 2;
+    border-radius: 50%;
+    width: 140px;
+    height: 140px;
+    border: 5px solid #1a1a1a;
+    transition: all 1s ease;
+  }
+  .progress .inner .water {
+    position: absolute;
+    z-index: 1;
+    width: 200%;
+    height: 200%;
+    left: -50%;
+    border-radius: 40%;
+    -webkit-animation-iteration-count: infinite;
+    animation-iteration-count: infinite;
+    -webkit-animation-timing-function: linear;
+    animation-timing-function: linear;
+    -webkit-animation-name: spin;
+    animation-name: spin;
+    transition: all 1s ease;
+    -webkit-animation-duration: 10s;
+    animation-duration: 10s;
+  }
+  .green .progress .inner .water {
+    top: 25%;
+  }
+  .green .progress .inner .water {
+    background: rgba(83,252,83,0.5);
+  }
+  .green .progress .inner .water {
+    box-shadow: 0 0 20px #03bc03;
+  }
+  .progress .inner .glare {
+    position: absolute;
+    top: -120%;
+    left: -120%;
+    z-index: 5;
+    width: 200%;
+    height: 200%;
+    transform: rotate(45deg);
+    border-radius: 50%;
+    background-color: rgba(255,255,255,0.15);
+    transition: all 1s ease;
+  }
+  .progress .inner .percent {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    font-weight: bold;
+    text-align: center;
+    line-height: 140px;
+    font-size: 48px;
+    transition: all 1s ease;
+  }
+  .green .progress .inner .percent {
+    color: #03c603;
+    /* text-shadow: 0 0 10px #029502; */
+  }
+  .red {
+    margin-top: 15px;
+  }
+  .red .progress {
+    border: 5px solid #ed3b3b;
+  }
+  .red .progress {
+    box-shadow: 0 0 20px #7a0b0b;
+  }
+  .red .progress .inner .water {
+    top: 75%;
+  }
+  .red .progress .inner .water {
+    background: rgba(237,59,59,0.5);
+  }
+  .red .progress .inner .water {
+    box-shadow: 0 0 20px #9b0e0e;
+  }
+  .red .progress .inner .percent {
+    color: #a30f0f;
+    text-shadow: 0 0 10px #7a0b0b;
+  }
+  .orange {
+    margin-top: 15px;
+  }
+  .orange .progress {
+    border: 5px solid #f07c3e;
+  }
+  .orange .progress {
+    box-shadow: 0 0 20px #7e320a;
+  }
+  .orange .progress .inner .water {
+    top: 50%;
+  }
+  .orange .progress .inner .water {
+    background: rgba(240,124,62,0.5);
+  }
+  .orange .progress .inner .water {
+    box-shadow: 0 0 20px #a0400c;
+  }
+  .orange .progress .inner .percent {
+    color: #a8430d;
+    text-shadow: 0 0 10px #7e320a;
+  }
+  .progress-title {
+    font-size: 24px;
+  }
+  @-webkit-keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }

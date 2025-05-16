@@ -1,16 +1,18 @@
-html {
-	box-sizing: border-box;
+/*** sun style ***/
+.sun-container {
+	height: 300px;
 }
 
-*,
-*:before,
-*:after {
-	box-sizing: inherit;
+.sun {
+	font-size: 100px;
+	cursor: grab;
+	display: inline-flex;
+	position: absolute;
+	z-index: 999;
 }
-
-body {
-	animation: skyChange 60s linear infinite;
-	background: deepskyblue;
+  
+.sun:active {
+	cursor: grabbing;
 }
 
 /* Container - Sky*/

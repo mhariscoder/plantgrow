@@ -1,11 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Draggable from 'react-draggable';
+import RainCanvas from './Components/RainCanvas';
 import './App.css';
 import './Plant.css';
 import './Sun.css';
+import './Rain.css';
 
 // Nutrient icons
 import { FaRegHeart, FaBrain, FaHandshake, FaPeopleCarry } from 'react-icons/fa';
+import ProgressCircle from './Components/ProgressCircle';
 
 function App() {
   const sunRef = useRef(null);
@@ -18,6 +21,7 @@ function App() {
   const [deadLeaves, setDeadLeaves] = useState(3);
   const [showPopup, setShowPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState('');
+  const [isRaining, setIsRaining] = useState(false);
 
   useEffect(() => {
     setStemHeight(plant?.length * 30)
@@ -117,12 +121,28 @@ function App() {
     <>
       <div className="game-container">
         
+        <RainCanvas isRaining={isRaining} />
 
         <div style={{
           display: 'flex',
           flex: 1
         }}>
           {/* <div className={`plant ${plantHealth}`} /> */}
+
+          <div className="result-panel">
+            <div className="progress-container">
+              <div style={{
+                marginBottom: '50px'
+              }}>
+                <ProgressCircle defaultColor={`green`} title={`Water`} />
+              </div>
+              <div style={{
+                marginBottom: '50px'
+              }}>
+                <ProgressCircle defaultColor={`orange`} title={`Sunlight`} />
+              </div>
+            </div>
+          </div>
 
           <div className="visual-panel">
             <div ref={sunContainerRef} className="sun-container">
@@ -149,7 +169,7 @@ function App() {
                 </div>
               </Draggable>
             </div>
-            
+
             <div className="plant">
               <div className={`stem ${plantHealth}`} style={{
                 height: stemHeight,
@@ -212,7 +232,11 @@ function App() {
           </div>
         
           <div className="operational-panel">
-            <button onClick={() => handleGrowPlant()}>Grow Plant</button>
+            <div className="operational-panel-control">
+              <button onClick={() => handleGrowPlant()}>Grow Plant</button>
+              <button onClick={() => setIsRaining(true)}>Start Rain</button>
+              <button onClick={() => setIsRaining(false)}>Stop Rain</button>
+            </div>
           </div>
 
           {/*

@@ -9,6 +9,18 @@
 	background-position: bottom left;
 }
 
+.result-panel {
+	padding: 30px;
+	position: absolute;
+	left: 0;
+	z-index: 999;
+	height: 100%;
+	padding: 15px;
+    box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+}
+
 .visual-panel {
 	position:relative;
 	margin:auto;
@@ -21,6 +33,21 @@
 .operational-panel {
 	position: absolute;
 	right: 0;
+	z-index: 999;
+	height: 100%;
+	padding: 15px;
+    box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+}
+
+.operational-panel-control {
+	display: flex;
+	flex-direction: column;
+}
+
+.progress-container {
+	/* margin-top: auto; */
 }
 
 .pot {
@@ -184,25 +211,6 @@
 		top:-9%;
 	}
 } 
-
-
-
-/*** sun style ***/
-.sun-container {
-	height: 300px;
-}
-
-.sun {
-	font-size: 100px;
-	cursor: grab;
-	display: inline-flex;
-	position: absolute;
-}
-  
-.sun:active {
-	cursor: grabbing;
-}
-
 
 
 /* .plant {
