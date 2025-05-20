@@ -50,39 +50,24 @@
     flex-direction: column;
     height: 100%;
   }
-  .green {
-    margin-top: 15px;
-  }
-  .green .progress,
-  .red .progress,
-  .orange .progress {
-    position: relative;
-    border-radius: 50%;
-  }
-  .green .progress,
-  .red .progress,
-  .orange .progress {
+  .progress {
     width: 150px;
     height: 150px;
-  }
-  .green .progress {
-    border: 5px solid #53fc53;
-  }
-  .green .progress {
-    box-shadow: 0 0 20px #029502;
-  }
-  .progress {
     transition: all 1s ease;
     background-color: #0b5fff;
+    position: relative;
+    border-radius: 50%;
   }
   .progress .inner {
     position: absolute;
     overflow: hidden;
     z-index: 2;
     border-radius: 50%;
-    width: 140px;
-    height: 140px;
-    border: 5px solid #1a1a1a;
+    width: 150px;
+    height: 150px;
+    /* width: 140px;
+    height: 140px; */
+    /* border: 5px solid #1a1a1a; */
     transition: all 1s ease;
   }
   .progress .inner .water {
@@ -101,15 +86,6 @@
     transition: all 1s ease;
     -webkit-animation-duration: 10s;
     animation-duration: 10s;
-  }
-  .green .progress .inner .water {
-    top: 25%;
-  }
-  .green .progress .inner .water {
-    background: rgba(83,252,83,0.5);
-  }
-  .green .progress .inner .water {
-    box-shadow: 0 0 20px #03bc03;
   }
   .progress .inner .glare {
     position: absolute;
@@ -134,11 +110,27 @@
     line-height: 140px;
     font-size: 48px;
     transition: all 1s ease;
+    z-index: 2;
+  }
+
+  .green .progress {
+    border: 5px solid #53fc53;
+    box-shadow: 0 0 20px #029502;
+  }
+  .green .progress .inner .water {
+    top: 25%;
+  }
+  .green .progress .inner .water {
+    background: rgba(83,252,83,0.5);
+  }
+  .green .progress .inner .water {
+    box-shadow: 0 0 20px #03bc03;
   }
   .green .progress .inner .percent {
     color: #03c603;
     /* text-shadow: 0 0 10px #029502; */
   }
+
   .red {
     margin-top: 15px;
   }
@@ -161,6 +153,7 @@
     color: #a30f0f;
     text-shadow: 0 0 10px #7a0b0b;
   }
+
   .orange {
     margin-top: 15px;
   }
@@ -183,6 +176,25 @@
     color: #a8430d;
     text-shadow: 0 0 10px #7e320a;
   }
+
+  .blue .progress {
+    border: 5px solid #83dbf9;
+    box-shadow: 0 0 20px #1b84a8;
+  }
+  .blue .progress .inner .water {
+    top: 25%;
+  }
+  .blue .progress .inner .water {
+    background: #83dbf9;
+  }
+  .blue .progress .inner .water {
+    box-shadow: 0 0 20px #83dbf9;
+  }
+  .blue .progress .inner .percent {
+    /* color: #ffffff; */
+    /* text-shadow: 0 0 10px #029502; */
+  }
+
   .progress-title {
     font-size: 24px;
   }

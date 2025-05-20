@@ -3,7 +3,8 @@ import './../ProgressCircle.css';
 
 const ProgressCircle = ({ 
     defaultColor = 'green',
-    title = ''
+    title = '',
+    level
 }) => {
     const [percentage, setPercentage] = useState(67);
     const [color, setColor] = useState(defaultColor);
@@ -30,7 +31,8 @@ const ProgressCircle = ({
         }
     };
 
-    const waterHeight = `${100 - percentage}%`;
+    // const waterHeight = `${100 - percentage}%`;
+    const waterHeight = `${100 - level}%`;
 
     return (
         <>
@@ -38,7 +40,8 @@ const ProgressCircle = ({
                 <div className="progress">
                     <div className="inner">
                         <div className="percent">
-                            <span>{percentage}</span>%
+                            {/* <span>{percentage}</span>% */}
+                            <span>{level}</span>%
                         </div>
                         <div className="water" style={{ top: waterHeight }}></div>
                         <div className="glare"></div>

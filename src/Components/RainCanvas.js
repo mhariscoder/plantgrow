@@ -6,6 +6,7 @@ const RainCanvas = ({ isRaining }) => {
   const frameIdRef = useRef(null);
 
   useEffect(() => {
+    console.log('isRaining', isRaining)
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     let width = window.innerWidth;
@@ -147,7 +148,7 @@ const RainCanvas = ({ isRaining }) => {
     };
   }, [isRaining]);
 
-  return <canvas ref={canvasRef} style={{ display: 'block' }} />;
+  return <canvas ref={canvasRef} style={{ display: 'block', transition: 'all 0.3s ease', backgroundColor: (isRaining) ? '#0000007a' : 'transparent', }} />;
 };
 
 export default RainCanvas;

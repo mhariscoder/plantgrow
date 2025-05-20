@@ -9,6 +9,7 @@ import './Rain.css';
 // Nutrient icons
 import { FaRegHeart, FaBrain, FaHandshake, FaPeopleCarry } from 'react-icons/fa';
 import ProgressCircle from './Components/ProgressCircle';
+import SunlightProgressBar from './Components/SunlightProgressBar';
 
 function App() {
   const sunRef = useRef(null);
@@ -16,12 +17,13 @@ function App() {
   const [stemHeight, setStemHeight] = useState(0);
   const [plant, setPlant] = useState([]);
   const [waterLevel, setWaterLevel] = useState(0);
-  const [sunlightLevel, setSunlightLevel] = useState(0);
+  const [sunlightLevel, setSunlightLevel] = useState(100);
   const [plantHealth, setPlantHealth] = useState('neutral');
   const [deadLeaves, setDeadLeaves] = useState(3);
   const [showPopup, setShowPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState('');
   const [isRaining, setIsRaining] = useState(false);
+  const rainIntervalRef = useRef(null);
 
   useEffect(() => {
     setStemHeight(plant?.length * 30)
@@ -30,6 +32,10 @@ function App() {
   useEffect(() => {
     
   }, [stemHeight]);
+
+  useEffect(() => {
+    if (waterLevel === 100) handleStopRain();
+  }, [waterLevel]);
 
   const handleWaterPlant = () => {
     const newLevel = Math.min(waterLevel + 10, 100);
@@ -117,6 +123,33 @@ function App() {
     }
   };
 
+  const handleStartRain = () => {
+    setIsRaining(true);
+
+    if (rainIntervalRef.current) clearInterval(rainIntervalRef.current);
+
+    rainIntervalRef.current = setInterval(() => {
+      setWaterLevel(prev => {
+        if (prev < 100) {
+          return prev + 1;
+        } else {
+          clearInterval(rainIntervalRef.current);
+          return 100;
+        }
+      });
+    }, 100);
+  }
+
+  const handleStopRain = () => {
+    setIsRaining(false);
+    setWaterLevel(0);
+    
+    if (rainIntervalRef.current) {
+      clearInterval(rainIntervalRef.current);
+      rainIntervalRef.current = null;
+    }
+  }
+
   return (
     <>
       <div className="game-container">
@@ -131,24 +164,24 @@ function App() {
 
           <div className="result-panel">
             <div className="progress-container">
-              <div style={{
-                marginBottom: '50px'
-              }}>
-                <ProgressCircle defaultColor={`green`} title={`Water`} />
+              <div style={{ marginBottom: '50px' }}>
+                <ProgressCircle level={waterLevel} defaultColor={`blue`} title={`Water`} />
               </div>
-              <div style={{
-                marginBottom: '50px'
-              }}>
-                <ProgressCircle defaultColor={`orange`} title={`Sunlight`} />
+              <div style={{ marginBottom: '50px' }}>
+                {/* <ProgressCircle defaultColor={`orange`} title={`Sunlight`} /> */}
+                <SunlightProgressBar level={sunlightLevel}/>
               </div>
             </div>
           </div>
 
           <div className="visual-panel">
-            <div ref={sunContainerRef} className="sun-container">
+            <div 
+              ref={sunContainerRef} 
+              className="sun-container"
+            >
               <Draggable 
-                nodeRef={sunRef} 
                 // axis="y" 
+                nodeRef={sunRef}
                 bounds={{ top: 0, bottom: 300 }} 
                 onDrag={handleSunDrag}
               >
@@ -234,8 +267,8 @@ function App() {
           <div className="operational-panel">
             <div className="operational-panel-control">
               <button onClick={() => handleGrowPlant()}>Grow Plant</button>
-              <button onClick={() => setIsRaining(true)}>Start Rain</button>
-              <button onClick={() => setIsRaining(false)}>Stop Rain</button>
+              <button onClick={() => handleStartRain()}>Start Rain</button>
+              <button onClick={() => handleStopRain()}>Stop Rain</button>
             </div>
           </div>
 
