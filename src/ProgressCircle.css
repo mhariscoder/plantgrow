@@ -51,8 +51,8 @@
     height: 100%;
   }
   .progress {
-    width: 150px;
-    height: 150px;
+    width: 140px;
+    height: 140px;
     transition: all 1s ease;
     background-color: #0b5fff;
     position: relative;
@@ -63,8 +63,8 @@
     overflow: hidden;
     z-index: 2;
     border-radius: 50%;
-    width: 150px;
-    height: 150px;
+    width: 140px;
+    height: 140px;
     /* width: 140px;
     height: 140px; */
     /* border: 5px solid #1a1a1a; */
@@ -108,7 +108,7 @@
     font-weight: bold;
     text-align: center;
     line-height: 140px;
-    font-size: 48px;
+    font-size: 36px;
     transition: all 1s ease;
     z-index: 2;
   }
@@ -191,12 +191,13 @@
     box-shadow: 0 0 20px #83dbf9;
   }
   .blue .progress .inner .percent {
-    /* color: #ffffff; */
+    color: #ffffff;
     /* text-shadow: 0 0 10px #029502; */
   }
 
   .progress-title {
     font-size: 24px;
+    color: #fff;
   }
   @-webkit-keyframes spin {
     from {

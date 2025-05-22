@@ -11,14 +11,15 @@
 
 .result-panel {
 	padding: 30px;
-	position: absolute;
-	left: 0;
-	z-index: 999;
-	height: 100%;
-	padding: 15px;
+    position: absolute;
+    left: 0;
+    z-index: 999;
+    height: 100%;
     box-sizing: border-box;
-	display: flex;
-	flex-direction: column;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    overflow: hidden;
 }
 
 .visual-panel {

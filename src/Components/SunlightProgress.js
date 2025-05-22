@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import "./../SunlightProgressBar.css";
+import "./../SunlightProgress.css";
 
-const SunlightProgressBar = ({ title = "Sunlight", level }) => {
+const SunlightProgress = ({ title = "Sunlight", level }) => {
     let brightness = 1;
     let waterHeight = 0
 // `${parseInt( (level <= 0) ? 100 : (100 - level) )}%`;
@@ -34,4 +34,4 @@ const SunlightProgressBar = ({ title = "Sunlight", level }) => {
   );
 };
 
-export default SunlightProgressBar;
+export default SunlightProgress;

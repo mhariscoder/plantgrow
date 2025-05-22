@@ -9,7 +9,8 @@ import './Rain.css';
 // Nutrient icons
 import { FaRegHeart, FaBrain, FaHandshake, FaPeopleCarry } from 'react-icons/fa';
 import ProgressCircle from './Components/ProgressCircle';
-import SunlightProgressBar from './Components/SunlightProgressBar';
+import SunlightProgress from './Components/SunlightProgress';
+import NutritionProgress from './Components/NutritionProgress';
 
 function App() {
   const sunRef = useRef(null);
@@ -164,13 +165,17 @@ function App() {
 
           <div className="result-panel">
             <div className="progress-container">
-              <div style={{ marginBottom: '50px' }}>
+              <div style={{ marginBottom: '30px' }}>
                 <ProgressCircle level={waterLevel} defaultColor={`blue`} title={`Water`} />
               </div>
-              <div style={{ marginBottom: '50px' }}>
+              <div style={{ marginBottom: '30px' }}>
                 {/* <ProgressCircle defaultColor={`orange`} title={`Sunlight`} /> */}
-                <SunlightProgressBar level={sunlightLevel}/>
+                <SunlightProgress level={sunlightLevel}/>
               </div>
+              <div style={{ marginBottom: '30px' }}>
+                <NutritionProgress title={`Nutritions`} />
+              </div>
+              
             </div>
           </div>
 

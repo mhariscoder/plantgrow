@@ -5,8 +5,8 @@
   .sunlight .progress {
     position: relative;
     border-radius: 50%;
-    width: 150px;
-    height: 150px;
+    width: 140px;
+    height: 140px;
     border: 5px solid #fa7e00;
     box-shadow: 0 0 20px #ff8400, 0 0 40px #ff6600, 0 0 60px #ff5100;
     /* background-color: #ffe3d5; */
@@ -24,7 +24,7 @@
     font-weight: bold;
     text-align: center;
     line-height: 140px;
-    font-size: 48px;
+    font-size: 36px;
     /* color: #ff8400; */
     /* text-shadow: 0 0 10px #ff8400, 0 0 15px #fff; */
   }
