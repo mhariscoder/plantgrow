@@ -3,9 +3,10 @@ import { buildStyles, CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 
 const NutritionProgress = ({
-    title
+    title,
+    percentage = 0
 }) => {
-    const percentage = 66;
+    // const percentage = 66;
     const progressRef = useRef(null);
 
     return (

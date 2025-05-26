@@ -1,16 +1,26 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { DndContext, useDraggable, useDroppable } from "@dnd-kit/core";
 import Draggable from 'react-draggable';
 import RainCanvas from './Components/RainCanvas';
 import './App.css';
 import './Plant.css';
 import './Sun.css';
 import './Rain.css';
+import './Nutrient.css';
 
 // Nutrient icons
 import { FaRegHeart, FaBrain, FaHandshake, FaPeopleCarry } from 'react-icons/fa';
 import ProgressCircle from './Components/ProgressCircle';
 import SunlightProgress from './Components/SunlightProgress';
 import NutritionProgress from './Components/NutritionProgress';
+
+import nitrogen from './Assets/nitrogen.png';
+import phosphorus from './Assets/phosphorus.png';
+import potassium from './Assets/potassium.png';
+import DragAndDrop from './DragAndDrop';
+import DropZone from './DropZone';
+import DraggableItem from './DraggableItem';
+import BirthdayConfetti from './BirthdayConfetti';
 
 function App() {
   const sunRef = useRef(null);
@@ -24,6 +34,9 @@ function App() {
   const [showPopup, setShowPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState('');
   const [isRaining, setIsRaining] = useState(false);
+  const [droppedItems, setDroppedItems] = useState([]);
+  const [isDropped, setIsDropped] = useState(false);
+  const [nutrientCount, setNutrientCount] = useState(0);
   const rainIntervalRef = useRef(null);
 
   useEffect(() => {
@@ -37,6 +50,19 @@ function App() {
   useEffect(() => {
     if (waterLevel === 100) handleStopRain();
   }, [waterLevel]);
+
+  useEffect(() => {
+    if(isDropped) {
+      const timer = setTimeout(() => {
+        setIsDropped(false);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [isDropped])
+
+  useEffect(() => {
+    console.log('nutrientCount', nutrientCount)
+  }, [nutrientCount])
 
   const handleWaterPlant = () => {
     const newLevel = Math.min(waterLevel + 10, 100);
@@ -151,162 +177,208 @@ function App() {
     }
   }
 
+  const handleDrop = (event) => {
+    const itemId = event.active.id;
+    const itemData = event.active.data.current.customData;
+    console.log("Item Dropped:", itemId, "Data:", itemData);
+
+    const incrementValue = itemData || 0;
+    setNutrientCount(prevCount => {
+      const newCount = prevCount + incrementValue;
+      return newCount > 100 ? 100 : newCount;
+    });
+
+    setDroppedItems((prevItems) => [...prevItems, itemData]);
+   
+    setIsDropped(true);
+  };
+
+
   return (
     <>
       <div className="game-container">
-        
+        {/* <DragAndDrop /> */}
         <RainCanvas isRaining={isRaining} />
 
-        <div style={{
-          display: 'flex',
-          flex: 1
-        }}>
-          {/* <div className={`plant ${plantHealth}`} /> */}
+        <DndContext 
+          onDragEnd={handleDrop}
+        >
+          <div style={{
+            display: 'flex',
+            flex: 1
+          }}>
+            {/* <div className={`plant ${plantHealth}`} /> */}
 
-          <div className="result-panel">
-            <div className="progress-container">
-              <div style={{ marginBottom: '30px' }}>
-                <ProgressCircle level={waterLevel} defaultColor={`blue`} title={`Water`} />
+            <div className="result-panel">
+              <div className="progress-container">
+                <div style={{ marginBottom: '30px' }}>
+                  <ProgressCircle level={waterLevel} defaultColor={`blue`} title={`Water`} />
+                </div>
+                <div style={{ marginBottom: '30px' }}>
+                  <SunlightProgress level={sunlightLevel}/>
+                </div>
+                <div style={{ marginBottom: '30px' }}>
+                  <NutritionProgress title={`Nutritions`} percentage={nutrientCount} />
+                </div>
+                
               </div>
-              <div style={{ marginBottom: '30px' }}>
-                {/* <ProgressCircle defaultColor={`orange`} title={`Sunlight`} /> */}
-                <SunlightProgress level={sunlightLevel}/>
-              </div>
-              <div style={{ marginBottom: '30px' }}>
-                <NutritionProgress title={`Nutritions`} />
-              </div>
-              
             </div>
-          </div>
 
-          <div className="visual-panel">
-            <div 
-              ref={sunContainerRef} 
-              className="sun-container"
-            >
-              <Draggable 
-                // axis="y" 
-                nodeRef={sunRef}
-                bounds={{ top: 0, bottom: 300 }} 
-                onDrag={handleSunDrag}
+            <div className="visual-panel">
+              <div 
+                ref={sunContainerRef} 
+                className="sun-container"
               >
-                {/* <div className="sun" ref={sunRef}>☀️</div> */}
-                <div className="sun theSun" ref={sunRef}>
-                  <div className="ray_box">
-                    <div className="ray ray1"></div>
-                    <div className="ray ray2"></div>
-                    <div className="ray ray3"></div>
-                    <div className="ray ray4"></div>
-                    <div className="ray ray5"></div>
-                    <div className="ray ray6"></div>
-                    <div className="ray ray7"></div>
-                    <div className="ray ray8"></div>
-                    <div className="ray ray9"></div>
-                    <div className="ray ray10"></div>
+                <Draggable 
+                  // axis="y" 
+                  nodeRef={sunRef}
+                  bounds={{ top: 0, bottom: 300 }} 
+                  onDrag={handleSunDrag}
+                >
+                  {/* <div className="sun" ref={sunRef}>☀️</div> */}
+                  <div className="sun theSun" ref={sunRef}>
+                    <div className="ray_box">
+                      <div className="ray ray1"></div>
+                      <div className="ray ray2"></div>
+                      <div className="ray ray3"></div>
+                      <div className="ray ray4"></div>
+                      <div className="ray ray5"></div>
+                      <div className="ray ray6"></div>
+                      <div className="ray ray7"></div>
+                      <div className="ray ray8"></div>
+                      <div className="ray ray9"></div>
+                      <div className="ray ray10"></div>
+                    </div>
+                  </div>
+                </Draggable>
+              </div>
+
+              
+                <div className="plant">
+                  {
+                    isDropped && 
+                      <BirthdayConfetti height={`500px`} width={`500px`} />
+                  }
+                  <DropZone onDrop={handleDrop}>
+                    <div className={`stem ${plantHealth}`} style={{
+                      height: stemHeight,
+                      transform: (plantHealth === 'neutral') ? `none` : `scale(1.2)`,
+                    }}>
+                      {
+                        plant?.map((item, key) => (
+                          <>
+                            <div
+                              className={`${plantHealth} leaf`}
+                              style={{
+                                bottom: `${((stemHeight / plant?.length) * key) + 30}px`,
+                                ...(key % 2 === 1 && {
+                                  // transform: `rotate(25deg)`,
+                                  transform: (plantHealth === 'neutral') ? `rotate(25deg)` : `rotate(40deg)`,
+                                  borderTopRightRadius: '50%',
+                                  borderTopLeftRadius: '50%',
+                                  borderBottomRightRadius: '50%',
+                                }),
+                                ...(key % 2 !== 1 && {
+                                  transform: (plantHealth === 'neutral') ? `rotate(-25deg)` : `rotate(-40deg)`,
+                                  // transform: `rotate(-25deg)`,
+                                  borderTopRightRadius: '50%',
+                                  borderTopLeftRadius: '50%',
+                                  borderBottomLeftRadius: '50%',
+                                }),
+                                ...(key % 2 === 1 && { right: '0' }),
+                                ...(key % 2 !== 1 && { left: '0' }),
+                                ...(item?.style || {})
+                              }}
+                            >
+                              <div className="line"></div>
+                            </div>
+                          </>
+                        ))
+                      }
+
+                      {/* <div class={`${plantHealth} leaf leaf01`}>
+                          <div className="line"></div>
+                      </div>
+                      <div class={`${plantHealth} leaf leaf02`}>
+                          <div className="line"></div>
+                      </div>
+                      <div class={`${plantHealth} leaf leaf03`}>
+                          <div className="line"></div>
+                      </div>
+                      <div class={`${plantHealth} leaf leaf04`}>
+                          <div className="line"></div>
+                      </div>
+                      <div class={`${plantHealth} leaf leaf05`}>
+                          <div className="line"></div>
+                      </div>
+                      <div class={`${plantHealth} leaf leaf06`}>
+                          <div className="line"></div>
+                      </div> */}
+                    </div>
+                    <div className="pot"></div>
+                    <div className="pot-top"></div>  
+                  </DropZone>
+                </div>
+             
+            </div>
+          
+            <div className="operational-panel">
+              <div className="operational-panel-control">
+                <button onClick={() => handleGrowPlant()}>Grow Plant</button>
+                <button onClick={() => handleStartRain()}>Start Rain</button>
+                <button onClick={() => handleStopRain()}>Stop Rain</button>
+
+                <div className="nutrients-container">
+                  <h2 className="nutrients-title">Nutrients</h2>
+                  <div>
+                    
+                    <DraggableItem id={1} top={0} data={10}>
+                      <img className="nutrient-image" src={nitrogen}/>
+                    </DraggableItem>
+                    
+                    <DraggableItem id={2} top={25} data={10}>
+                      <img className="nutrient-image" src={phosphorus}/>
+                    </DraggableItem>
+                    
+                    <DraggableItem id={3} top={50} data={10}>
+                      <img className="nutrient-image" src={potassium}/>
+                    </DraggableItem>
                   </div>
                 </div>
+              </div>
+            </div>
+
+            {/*
+              <button onClick={handleWaterPlant}>💧 Water the Plant</button>
+              <p>Water: {Math.round(waterLevel)}% | Sunlight: {Math.round(sunlightLevel)}%</p>
+
+              <Draggable nodeRef={sunRef} axis="y" bounds={{ top: -50, bottom: 50 }} onDrag={handleSunDrag}>
+                <div ref={sunRef}>
+                  <div className="sun">☀️</div>
+                </div>
               </Draggable>
-            </div>
+              
+              {Array.from({ length: deadLeaves }, (_, i) => (
+                <div key={i} className="dead-leaf" onClick={pruneLeaves}>
+                  🍂
+                </div>
+              ))}
 
-            <div className="plant">
-              <div className={`stem ${plantHealth}`} style={{
-                height: stemHeight,
-                transform: (plantHealth === 'neutral') ? `none` : `scale(1.2)`,
-              }}>
-                {
-                  plant?.map((item, key) => (
-                    <>
-                      <div
-                        className={`${plantHealth} leaf`}
-                        style={{
-                          bottom: `${((stemHeight / plant?.length) * key) + 30}px`,
-                          ...(key % 2 === 1 && {
-                            // transform: `rotate(25deg)`,
-                            transform: (plantHealth === 'neutral') ? `rotate(25deg)` : `rotate(40deg)`,
-                            borderTopRightRadius: '50%',
-                            borderTopLeftRadius: '50%',
-                            borderBottomRightRadius: '50%',
-                          }),
-                          ...(key % 2 !== 1 && {
-                            transform: (plantHealth === 'neutral') ? `rotate(-25deg)` : `rotate(-40deg)`,
-                            // transform: `rotate(-25deg)`,
-                            borderTopRightRadius: '50%',
-                            borderTopLeftRadius: '50%',
-                            borderBottomLeftRadius: '50%',
-                          }),
-                          ...(key % 2 === 1 && { right: '0' }),
-                          ...(key % 2 !== 1 && { left: '0' }),
-                          ...(item?.style || {})
-                        }}
-                      >
-                        <div className="line"></div>
-                      </div>
-                    </>
-                  ))
-                }
-
-                {/* <div class={`${plantHealth} leaf leaf01`}>
-                    <div className="line"></div>
-                </div>
-                <div class={`${plantHealth} leaf leaf02`}>
-                    <div className="line"></div>
-                </div>
-                <div class={`${plantHealth} leaf leaf03`}>
-                    <div className="line"></div>
-                </div>
-                <div class={`${plantHealth} leaf leaf04`}>
-                    <div className="line"></div>
-                </div>
-                <div class={`${plantHealth} leaf leaf05`}>
-                    <div className="line"></div>
-                </div>
-                <div class={`${plantHealth} leaf leaf06`}>
-                    <div className="line"></div>
-                </div> */}
+              <div className="nutrients">
+                <button onClick={() => addNutrient('Empathy')}><FaRegHeart /> Empathy</button>
+                <button onClick={() => addNutrient('Psychological Safety')}><FaBrain /> Safety</button>
+                <button onClick={() => addNutrient('Trust')}><FaHandshake /> Trust</button>
+                <button onClick={() => addNutrient('Support')}><FaPeopleCarry /> Support</button>
               </div>
-              <div className="pot"></div>
-              <div className="pot-top"></div>
-            </div>
+
+              {showPopup && (
+                <div className="popup">
+                  Watering & Sunlight = Feedback & Guidance. {popupMessage}
+                </div>
+              )}
+            */}
           </div>
-        
-          <div className="operational-panel">
-            <div className="operational-panel-control">
-              <button onClick={() => handleGrowPlant()}>Grow Plant</button>
-              <button onClick={() => handleStartRain()}>Start Rain</button>
-              <button onClick={() => handleStopRain()}>Stop Rain</button>
-            </div>
-          </div>
-
-          {/*
-            <button onClick={handleWaterPlant}>💧 Water the Plant</button>
-            <p>Water: {Math.round(waterLevel)}% | Sunlight: {Math.round(sunlightLevel)}%</p>
-
-            <Draggable nodeRef={sunRef} axis="y" bounds={{ top: -50, bottom: 50 }} onDrag={handleSunDrag}>
-              <div ref={sunRef}>
-                <div className="sun">☀️</div>
-              </div>
-            </Draggable>
-            
-            {Array.from({ length: deadLeaves }, (_, i) => (
-              <div key={i} className="dead-leaf" onClick={pruneLeaves}>
-                🍂
-              </div>
-            ))}
-
-            <div className="nutrients">
-              <button onClick={() => addNutrient('Empathy')}><FaRegHeart /> Empathy</button>
-              <button onClick={() => addNutrient('Psychological Safety')}><FaBrain /> Safety</button>
-              <button onClick={() => addNutrient('Trust')}><FaHandshake /> Trust</button>
-              <button onClick={() => addNutrient('Support')}><FaPeopleCarry /> Support</button>
-            </div>
-
-            {showPopup && (
-              <div className="popup">
-                Watering & Sunlight = Feedback & Guidance. {popupMessage}
-              </div>
-            )}
-          */}
-        </div>
+        </DndContext>
       </div>
     </>
   );

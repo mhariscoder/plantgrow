@@ -25,7 +25,7 @@
 .visual-panel {
 	position:relative;
 	margin:auto;
-	display:block;
+	display:flex;
 	width:600px;
 	height:100vh;
 	background:none;
@@ -49,6 +49,11 @@
 
 .progress-container {
 	/* margin-top: auto; */
+}
+
+.plant {
+	margin-top: auto;
+	position: relative;
 }
 
 .pot {

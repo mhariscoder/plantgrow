@@ -148,7 +148,7 @@ const RainCanvas = ({ isRaining }) => {
     };
   }, [isRaining]);
 
-  return <canvas ref={canvasRef} style={{ display: 'block', transition: 'all 0.3s ease', backgroundColor: (isRaining) ? '#0000007a' : 'transparent', }} />;
+  return <canvas ref={canvasRef} className="raincanvas" style={{ display: 'block', transition: 'all 0.3s ease', backgroundColor: (isRaining) ? '#0000007a' : 'transparent', }} />;
 };
 
 export default RainCanvas;
