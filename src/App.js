@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { DndContext, useDraggable, useDroppable } from "@dnd-kit/core";
+import { DndContext} from "@dnd-kit/core";
 import Draggable from 'react-draggable';
 import RainCanvas from './Components/RainCanvas';
 import './App.css';
@@ -8,8 +8,6 @@ import './Sun.css';
 import './Rain.css';
 import './Nutrient.css';
 
-// Nutrient icons
-import { FaRegHeart, FaBrain, FaHandshake, FaPeopleCarry } from 'react-icons/fa';
 import ProgressCircle from './Components/ProgressCircle';
 import SunlightProgress from './Components/SunlightProgress';
 import NutritionProgress from './Components/NutritionProgress';
@@ -17,7 +15,6 @@ import NutritionProgress from './Components/NutritionProgress';
 import nitrogen from './Assets/nitrogen.png';
 import phosphorus from './Assets/phosphorus.png';
 import potassium from './Assets/potassium.png';
-import DragAndDrop from './DragAndDrop';
 import DropZone from './DropZone';
 import DraggableItem from './DraggableItem';
 import BirthdayConfetti from './BirthdayConfetti';
@@ -178,19 +175,26 @@ function App() {
   }
 
   const handleDrop = (event) => {
-    const itemId = event.active.id;
-    const itemData = event.active.data.current.customData;
-    console.log("Item Dropped:", itemId, "Data:", itemData);
+    const { active, over } = event; // Get active draggable item and where it's dropped
 
-    const incrementValue = itemData || 0;
-    setNutrientCount(prevCount => {
-      const newCount = prevCount + incrementValue;
-      return newCount > 100 ? 100 : newCount;
-    });
+    // Only trigger handleDrop if the draggable item was dropped into DropZone
+    if (over && over.id === 'dropzone') {
+      const itemId = active.id;  // Get the dropped item's id
+      const itemData = active.data.current.customData;  // Get any custom data from the draggable item
 
-    setDroppedItems((prevItems) => [...prevItems, itemData]);
-   
-    setIsDropped(true);
+      console.log("Item Dropped:", itemId, "Data:", itemData);
+
+      // Update the nutrient count based on the dropped item's data
+      const incrementValue = itemData || 0;
+      setNutrientCount((prevCount) => {
+        const newCount = prevCount + incrementValue;
+        return newCount > 100 ? 100 : newCount;
+      });
+
+      // Store the dropped item data (optional)
+      setDroppedItems((prevItems) => [...prevItems, itemData]);
+      setIsDropped(true);
+    }
   };
 
 
@@ -200,9 +204,7 @@ function App() {
         {/* <DragAndDrop /> */}
         <RainCanvas isRaining={isRaining} />
 
-        <DndContext 
-          onDragEnd={handleDrop}
-        >
+        <DndContext onDragEnd={handleDrop}>
           <div style={{
             display: 'flex',
             flex: 1
@@ -220,7 +222,6 @@ function App() {
                 <div style={{ marginBottom: '30px' }}>
                   <NutritionProgress title={`Nutritions`} percentage={nutrientCount} />
                 </div>
-                
               </div>
             </div>
 
