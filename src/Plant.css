@@ -47,6 +47,24 @@
 	flex-direction: column;
 }
 
+.rain {
+	margin-bottom: 25px;
+	display: inline-flex;
+	background-color: transparent;
+	border: 0;
+	outline: 0;
+	transition: all 0.3s ease;
+}
+
+.rain:active {
+	transform: scale(0.9);
+}
+
+.rain-image {
+	width: 100px;
+	height: 100px;
+}
+
 .progress-container {
 	/* margin-top: auto; */
 }
@@ -59,7 +77,7 @@
 .pot {
 	position:absolute;
 	width:20%;
-	height: 100px;
+	height: 80px;
 	bottom:0;
 	left:40%;
 	background: #cc6601;
@@ -72,7 +90,7 @@
 	position: absolute;
     width: 22%;
     height: 25px;
-    bottom: 100px;
+    bottom: 80px;
     left: 39%;
     background: #9d4700;
     border-top-left-radius: 10px;
@@ -83,8 +101,10 @@
 	position:absolute;
 	width:3%;
 	left:49%;
-	bottom:100px;
+	bottom:80px;
 	background:#008000;
+	background-image: radial-gradient(#008000, #135113);
+	border-top-right-radius: 80%;
 }
 
 .leaf {
@@ -92,7 +112,8 @@
 	width:500%;
 	height: 50px;
 	/* border-radius:50%; */
-	background:#008000;
+	background: #159315;
+	
 }
 
 .leaf .line {
@@ -231,10 +252,29 @@
 /* Plant states */
 .happy {
 	filter: brightness(1.2);
+	transform: scale(1.1);
 }
 
 .happy.leaf {
 	transform: scale(1.1);
+}
+
+.healthy {
+	filter: brightness(1.2);
+	transform: scale(1.1);
+}
+
+.healthy.leaf {
+	transform: scale(1.1);
+}
+
+.dull {
+	transform: none!important;
+}
+
+.droopy {
+	filter: brightness(0.7);
+	transform: none!important;
 }
 
 .drooping {
