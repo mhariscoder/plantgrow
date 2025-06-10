@@ -9,6 +9,29 @@
     border-radius: 10px;
     object-fit: cover;
 }
+.nutrients-panel {
+    display: flex;
+}
+.vertical-progress-bar {
+    position: absolute;
+    left: -15%;
+}
+.vertical-progress-bar-outer {
+    position: relative;
+    width: 15px;
+    height: 380px;
+    background-color: rgb(207, 207, 207);
+}
+.vertical-progress-bar-inner {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 0;
+    width: 100%;
+    background-color: #008000;
+    transition: all 0.3s ease;
+}
+
 /* .blast {
     animation: blast-animation 1s ease-out forwards;
 }

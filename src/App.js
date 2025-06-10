@@ -44,6 +44,8 @@ function App() {
   const [droppedItems, setDroppedItems] = useState([]);
   const [isDropped, setIsDropped] = useState(false);
   const [nutrientCount, setNutrientCount] = useState(0);
+  const [nutrientCountProgress, setNutrientCountProgress] = useState(0);
+  const [nutrientVerticalProgress, setNutrientVerticalProgress] = useState(0);
   const [bounds, setBounds] = useState({top: 0, bottom: 300});
   const rainIntervalRef = useRef(null);
 
@@ -78,6 +80,14 @@ function App() {
       return () => clearTimeout(timer);
     }
   }, [isDropped])
+
+  useEffect(() => {
+    if(nutrientCountProgress === 3) {
+      setNutrientCountProgress(0);
+      setNutrientVerticalProgress(0);
+      handleGrowPlant();
+    }
+  }, [nutrientCountProgress]);
 
   const handleWaterPlant = () => {
     const newLevel = Math.min(waterLevel + 10, 100);
@@ -214,6 +224,8 @@ function App() {
       // Store the dropped item data (optional)
       setDroppedItems((prevItems) => [...prevItems, itemData]);
       setIsDropped(true);
+      setNutrientCountProgress(nutrientCountProgress+1);
+      setNutrientVerticalProgress(nutrientVerticalProgress+33.33);
     }
   };
 
@@ -364,17 +376,28 @@ function App() {
                       <img src={rain} alt="Rain" className="rain-image" />
                     </button>
                     
-                    <DraggableItem id={1} top={0} data={10}>
-                      <img className="nutrient-image" src={nitrogen}/>
-                    </DraggableItem>
-                    
-                    <DraggableItem id={2} top={25} data={10}>
-                      <img className="nutrient-image" src={phosphorus}/>
-                    </DraggableItem>
-                    
-                    <DraggableItem id={3} top={50} data={10}>
-                      <img className="nutrient-image" src={potassium}/>
-                    </DraggableItem>
+                    <div className="nutrients-panel">
+                      <div className="vertical-progress-bar">
+                        <div className="vertical-progress-bar-outer">
+                          <div className="vertical-progress-bar-inner" style={{
+                            height: `${nutrientVerticalProgress}%`
+                          }}></div>
+                        </div>
+                      </div>
+                      <div>
+                        <DraggableItem id={1} top={0} data={10}>
+                          <img className="nutrient-image" src={nitrogen}/>
+                        </DraggableItem>
+                        
+                        <DraggableItem id={2} top={25} data={10}>
+                          <img className="nutrient-image" src={phosphorus}/>
+                        </DraggableItem>
+                        
+                        <DraggableItem id={3} top={50} data={10}>
+                          <img className="nutrient-image" src={potassium}/>
+                        </DraggableItem>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
