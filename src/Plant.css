@@ -65,6 +65,24 @@
 	height: 100px;
 }
 
+.sunicon {
+	margin-bottom: 25px;
+	display: inline-flex;
+	background-color: transparent;
+	border: 0;
+	outline: 0;
+	transition: all 0.3s ease;
+}
+
+.sunicon:active {
+	transform: scale(0.9);
+}
+
+.sunicon-image {
+	width: 100px;
+	height: 100px;
+}
+
 .progress-container {
 	/* margin-top: auto; */
 }
@@ -341,4 +359,24 @@ button {
 	to {
 		transform: rotate(360deg);
 	}
+}
+
+
+
+/* Sun light effects on plant */
+.stem.vibrant {
+	transform: scale(1.2)!important;
+	filter: brightness(1.2);
+}
+.pale {
+	background-color: #85ae86 !important;
+}
+.stem.pale {
+	background-image: radial-gradient(#85ae86, #5c685d) !important;
+}
+.burnt {
+	background-color: #5A4E3C!important;
+}
+.stem.burnt {
+	background-image: radial-gradient(#5A4E3C, #312a20) !important;
 }

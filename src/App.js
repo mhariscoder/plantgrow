@@ -16,6 +16,7 @@ import nitrogen from './Assets/nitrogen.png';
 import phosphorus from './Assets/phosphorus.png';
 import potassium from './Assets/potassium.png';
 import rain from './Assets/rain.png';
+import sunicon from './Assets/sun-icon.png';
 import DropZone from './DropZone';
 import DraggableItem from './DraggableItem';
 import BirthdayConfetti from './BirthdayConfetti';
@@ -32,8 +33,10 @@ function App() {
 
   // water states
   const [waterLevel, setWaterLevel] = useState(0);
-  const [waterPoints, setWaterPoints] = useState(0);
-  const [waterEffectClass, setWaterEffectClass] = useState(null);
+  
+  const [waterEffectClass, setWaterEffectClass] = useState('');
+  const [sunlightEffectClass, setSunlightEffectClass] = useState('');
+  const [sunEffectClass, setSunEffectClass] = useState('');
 
   const [sunlightLevel, setSunlightLevel] = useState(100);
   const [plantHealth, setPlantHealth] = useState('neutral');
@@ -46,8 +49,12 @@ function App() {
   const [nutrientCount, setNutrientCount] = useState(0);
   const [nutrientCountProgress, setNutrientCountProgress] = useState(0);
   const [nutrientVerticalProgress, setNutrientVerticalProgress] = useState(0);
+
+  const [waterPoints, setWaterPoints] = useState(0);
+  
   const [bounds, setBounds] = useState({top: 0, bottom: 300});
   const rainIntervalRef = useRef(null);
+  const sunIntervalRef = useRef(null);
 
   useEffect(() => {
     setStemHeight(plant?.length * 50)
@@ -68,9 +75,26 @@ function App() {
       setWaterPoints(15);
       setWaterEffectClass('droopy');
     } else {
-      setWaterEffectClass(null);
+      setWaterEffectClass('');
     }
   }, [waterLevel]);
+
+  useEffect(() => {
+    const sunlevel = (100 - sunlightLevel);
+    console.log('sunlevel', sunlevel)
+
+    if(sunlevel < 25 && sunlevel > 15) {
+      setSunlightEffectClass('vibrant');
+    }
+
+    if(sunlevel < 45 && sunlevel > 25) {
+      setSunlightEffectClass('pale');
+    }
+    
+    if(sunlevel > 55) {
+      setSunlightEffectClass('burnt');
+    }
+  }, [sunlightLevel])
 
   useEffect(() => {
     if(isDropped) {
@@ -103,12 +127,25 @@ function App() {
       const containerHeight = container.offsetHeight;
       const sunTop = data?.y || 0;
   
-      let level = 100 - (sunTop / (containerHeight - sun.offsetHeight)) * 100;
+      const sunlevel = (sunTop / (containerHeight - sun.offsetHeight)) * 100;
+      let level = 100 - sunlevel;
   
       level = Math.min(Math.max(level, 0), 100);
   
       setSunlightLevel(level);
       evaluatePlant(waterLevel, level);
+
+      // if(sunlevel < 25) {
+      //   setSunlightEffectClass('vibrant');
+      // }
+
+      // if(sunlevel < 45 && sunlevel > 25) {
+      //   setSunlightEffectClass('pale');
+      // }
+      
+      // if(sunlevel > 55) {
+      //   setSunlightEffectClass('burnt');
+      // }
     }
   };
 
@@ -229,6 +266,35 @@ function App() {
     }
   };
 
+  const handleStartSunlight = () => {
+    if(sunlightLevel > 0) {
+      if (sunIntervalRef.current) clearInterval(sunIntervalRef.current);
+
+      sunIntervalRef.current = setInterval(() => {
+        setSunlightLevel((
+          prev => {
+            if (prev <= 100) {
+              console.log('prev - 1', prev - 1)
+              return prev - 1;
+            } else {
+              clearInterval(sunIntervalRef.current);
+              return 0;
+            }
+          }
+        ));
+      }, 100);
+
+      setSunEffectClass('sunlight');
+    }
+  }
+
+  const handleStopSunlight = () => {
+    if (sunIntervalRef.current) {
+      clearInterval(sunIntervalRef.current);
+      sunIntervalRef.current = null;
+      setSunEffectClass('');
+    }
+  }
 
   return (
     <>
@@ -270,7 +336,7 @@ function App() {
                   onDrag={handleSunDrag}
                 >
                   {/* <div className="sun" ref={sunRef}>☀️</div> */}
-                  <div className="sun theSun" ref={sunRef} style={{transform: "translate(0px, 100px)"}}>
+                  <div className={`${sunEffectClass} sun theSun`} ref={sunRef} style={{transform: "translate(0px, 100px)"}}>
                     <div className="ray_box">
                       <div className="ray ray1"></div>
                       <div className="ray ray2"></div>
@@ -294,14 +360,14 @@ function App() {
                       <BirthdayConfetti height={`500px`} width={`500px`} />
                   }
                   <DropZone onDrop={handleDrop}>
-                    <div className={`stem ${plantHealth} ${waterEffectClass}`} style={{
+                    <div className={`stem ${plantHealth} ${waterEffectClass} ${sunlightEffectClass}`} style={{
                       height: stemHeight,
                     }}>
                       {
                         plant?.map((item, key) => (
                           <>
                             <div
-                              className={`${plantHealth} ${waterEffectClass} leaf`}
+                              className={`${plantHealth} ${waterEffectClass} ${sunlightEffectClass} leaf`}
                               style={{
                                 bottom: `${( (stemHeight / (plant?.length)) * key )}px`,
                                 ...(key % 2 === 1 && {
@@ -366,7 +432,16 @@ function App() {
 
                 <div className="nutrients-container">
                   {/* <h2 className="nutrients-title">Nutrients</h2> */}
-                  <div>
+                  {/* <div> */}
+                    <button
+                      onMouseDown={() => handleStartSunlight()} 
+                      onMouseUp={() => handleStopSunlight()}
+                      title="Sun" 
+                      className="sunicon"
+                    >
+                      <img src={sunicon} alt="Sun" className="sunicon-image" />
+                    </button>
+
                     <button
                       onMouseDown={() => handleStartRain()} 
                       onMouseUp={() => handleStopRain()}
@@ -375,6 +450,8 @@ function App() {
                     >
                       <img src={rain} alt="Rain" className="rain-image" />
                     </button>
+
+                    
                     
                     <div className="nutrients-panel">
                       <div className="vertical-progress-bar">
@@ -398,7 +475,7 @@ function App() {
                         </DraggableItem>
                       </div>
                     </div>
-                  </div>
+                  {/* </div> */}
                 </div>
               </div>
             </div>

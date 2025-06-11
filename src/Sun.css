@@ -56,13 +56,18 @@
 /* Sun  */
 .theSun {
 	opacity: 1;
-	box-shadow: 0px 0px 15px 3px yellow;
+	/* box-shadow: 0px 0px 15px 3px yellow; */
 	width: 100px;
 	height: 100px;
 	left: 30vw;
-	animation: sunpulse 2s alternate infinite;
+	/* animation: sunpulse 2s alternate infinite; */
 	border-radius: 50%;
 	background-image: radial-gradient(circle, #ffd200 95%, #f7971e);
+}
+
+.theSun.sunlight {
+	box-shadow: 0px 0px 15px 3px yellow;
+	animation: sunpulse 2s alternate infinite;
 }
 
 @keyframes sunpulse {

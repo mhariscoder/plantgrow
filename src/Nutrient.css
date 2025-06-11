@@ -1,5 +1,7 @@
 .nutrients-container {
     margin-top: 100px;
+    display: flex;
+    flex-direction: column;
 }
 .nutrients-title {
     color: #9e4800;
