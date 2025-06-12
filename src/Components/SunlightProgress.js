@@ -10,7 +10,7 @@ const SunlightProgress = ({ title = "Sunlight", level }) => {
     if(level < 100) waterHeight = parseInt(100 - level);
 
     brightness = (level !== 0) ? (level === 100) ? 1 : ((1-(level/100)) + 1) : 0;
-    console.log('brightness', brightness)
+    // console.log('brightness', brightness)
 
     return (
         <div className="sunlight">

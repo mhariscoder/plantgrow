@@ -14,7 +14,7 @@ const NutritionProgress = ({
             <div style={{ width: 160, height: 160 }}>
                 <CircularProgressbar
                     value={percentage}
-                    text={`${percentage}%`}
+                    // text={`${percentage}%`}
                     background
                     backgroundPadding={6}
                     strokeWidth={10}

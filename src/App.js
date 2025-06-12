@@ -31,9 +31,11 @@ function App() {
     {}
   ]);
 
+  // global activity
+  const [activity, setActivity] = useState(true);
+
   // water states
   const [waterLevel, setWaterLevel] = useState(0);
-  
   const [waterEffectClass, setWaterEffectClass] = useState('');
   const [sunlightEffectClass, setSunlightEffectClass] = useState('');
   const [sunEffectClass, setSunEffectClass] = useState('');
@@ -51,6 +53,7 @@ function App() {
   const [nutrientVerticalProgress, setNutrientVerticalProgress] = useState(0);
 
   const [waterPoints, setWaterPoints] = useState(0);
+  const [sunlightPoints, setSunlightPoints] = useState(0);
   
   const [bounds, setBounds] = useState({top: 0, bottom: 300});
   const rainIntervalRef = useRef(null);
@@ -63,36 +66,43 @@ function App() {
   useEffect(() => {
     if (waterLevel === 100) handleStopRain();
 
-    if (waterLevel > 40 && waterLevel < 60) {
-      setWaterPoints(25);
-      setWaterEffectClass('healthy');
-    } else
-    if (waterLevel < 40) {
-      setWaterPoints(15);
-      setWaterEffectClass('dull');
-    } else
-    if (waterLevel > 60) {
-      setWaterPoints(15);
-      setWaterEffectClass('droopy');
-    } else {
-      setWaterEffectClass('');
+    if(activity) {
+      if (waterLevel > 40 && waterLevel < 60) {
+        setWaterPoints(25);
+        setWaterEffectClass('healthy');
+      } else
+      if (waterLevel < 40) {
+        setWaterPoints(15);
+        setWaterEffectClass('dull');
+      } else
+      if (waterLevel > 60) {
+        setWaterPoints(15);
+        setWaterEffectClass('droopy');
+        setActivity(false);
+      } else {
+        setWaterEffectClass('');
+      }
     }
   }, [waterLevel]);
 
   useEffect(() => {
     const sunlevel = (100 - sunlightLevel);
-    console.log('sunlevel', sunlevel)
-
-    if(sunlevel < 25 && sunlevel > 15) {
-      setSunlightEffectClass('vibrant');
-    }
-
-    if(sunlevel < 45 && sunlevel > 25) {
-      setSunlightEffectClass('pale');
-    }
-    
-    if(sunlevel > 55) {
-      setSunlightEffectClass('burnt');
+    if(activity) {
+      if(sunlevel < 25 && sunlevel > 15) {
+        setSunlightEffectClass('vibrant');
+        setSunlightPoints(25);
+      }
+  
+      if(sunlevel < 45 && sunlevel > 25) {
+        setSunlightEffectClass('pale');
+        setSunlightPoints(15);
+      }
+      
+      if(sunlevel > 55) {
+        setSunlightEffectClass('burnt');
+        setSunlightPoints(15);
+        setActivity(false);
+      }
     }
   }, [sunlightLevel])
 
@@ -106,10 +116,12 @@ function App() {
   }, [isDropped])
 
   useEffect(() => {
-    if(nutrientCountProgress === 3) {
-      setNutrientCountProgress(0);
-      setNutrientVerticalProgress(0);
-      handleGrowPlant();
+    if(activity) {
+      if(nutrientCountProgress === 3) {
+        setNutrientCountProgress(0);
+        setNutrientVerticalProgress(0);
+        handleGrowPlant();
+      }
     }
   }, [nutrientCountProgress]);
 
@@ -120,33 +132,33 @@ function App() {
   };
 
   const handleSunDrag = (e, data) => {
-    const container = sunContainerRef.current;
-    const sun = sunRef.current;
+    // const container = sunContainerRef.current;
+    // const sun = sunRef.current;
   
-    if (container && sun) {
-      const containerHeight = container.offsetHeight;
-      const sunTop = data?.y || 0;
+    // if (container && sun) {
+    //   const containerHeight = container.offsetHeight;
+    //   const sunTop = data?.y || 0;
   
-      const sunlevel = (sunTop / (containerHeight - sun.offsetHeight)) * 100;
-      let level = 100 - sunlevel;
+    //   const sunlevel = (sunTop / (containerHeight - sun.offsetHeight)) * 100;
+    //   let level = 100 - sunlevel;
   
-      level = Math.min(Math.max(level, 0), 100);
+    //   level = Math.min(Math.max(level, 0), 100);
   
-      setSunlightLevel(level);
-      evaluatePlant(waterLevel, level);
+    //   setSunlightLevel(level);
+    //   evaluatePlant(waterLevel, level);
 
-      // if(sunlevel < 25) {
-      //   setSunlightEffectClass('vibrant');
-      // }
+    //   // if(sunlevel < 25) {
+    //   //   setSunlightEffectClass('vibrant');
+    //   // }
 
-      // if(sunlevel < 45 && sunlevel > 25) {
-      //   setSunlightEffectClass('pale');
-      // }
+    //   // if(sunlevel < 45 && sunlevel > 25) {
+    //   //   setSunlightEffectClass('pale');
+    //   // }
       
-      // if(sunlevel > 55) {
-      //   setSunlightEffectClass('burnt');
-      // }
-    }
+    //   // if(sunlevel > 55) {
+    //   //   setSunlightEffectClass('burnt');
+    //   // }
+    // }
   };
 
   const evaluatePlant = (water, sun) => {
@@ -213,21 +225,23 @@ function App() {
   };
 
   const handleStartRain = () => {
-    if(waterLevel < 100) {
-      setIsRaining(true);
-
-      if (rainIntervalRef.current) clearInterval(rainIntervalRef.current);
-
-      rainIntervalRef.current = setInterval(() => {
-        setWaterLevel(prev => {
-          if (prev < 100) {
-            return prev + 1;
-          } else {
-            clearInterval(rainIntervalRef.current);
-            return 100;
-          }
-        });
-      }, 100);
+    if(activity) {
+      if(waterLevel < 100) {
+        setIsRaining(true);
+  
+        if (rainIntervalRef.current) clearInterval(rainIntervalRef.current);
+  
+        rainIntervalRef.current = setInterval(() => {
+          setWaterLevel(prev => {
+            if (prev < 100) {
+              return prev + 1;
+            } else {
+              clearInterval(rainIntervalRef.current);
+              return 100;
+            }
+          });
+        }, 100);
+      }
     }
   }
 
@@ -245,11 +259,11 @@ function App() {
     const { active, over } = event; // Get active draggable item and where it's dropped
 
     // Only trigger handleDrop if the draggable item was dropped into DropZone
-    if (over && over.id === 'dropzone') {
+    if (activity && over && over.id === 'dropzone') {
       const itemId = active.id;  // Get the dropped item's id
       const itemData = active.data.current.customData;  // Get any custom data from the draggable item
 
-      console.log("Item Dropped:", itemId, "Data:", itemData);
+      // console.log("Item Dropped:", itemId, "Data:", itemData);
 
       // Update the nutrient count based on the dropped item's data
       const incrementValue = itemData || 0;
@@ -267,24 +281,26 @@ function App() {
   };
 
   const handleStartSunlight = () => {
-    if(sunlightLevel > 0) {
-      if (sunIntervalRef.current) clearInterval(sunIntervalRef.current);
-
-      sunIntervalRef.current = setInterval(() => {
-        setSunlightLevel((
-          prev => {
-            if (prev <= 100) {
-              console.log('prev - 1', prev - 1)
-              return prev - 1;
-            } else {
-              clearInterval(sunIntervalRef.current);
-              return 0;
+    if(activity) {
+      if(sunlightLevel > 0) {
+        if (sunIntervalRef.current) clearInterval(sunIntervalRef.current);
+  
+        sunIntervalRef.current = setInterval(() => {
+          setSunlightLevel((
+            prev => {
+              if (prev <= 100) {
+                // console.log('prev - 1', prev - 1)
+                return prev - 1;
+              } else {
+                clearInterval(sunIntervalRef.current);
+                return 0;
+              }
             }
-          }
-        ));
-      }, 100);
-
-      setSunEffectClass('sunlight');
+          ));
+        }, 100);
+  
+        setSunEffectClass('sunlight');
+      }
     }
   }
 
@@ -318,7 +334,11 @@ function App() {
                   <SunlightProgress level={sunlightLevel}/>
                 </div>
                 <div style={{ marginBottom: '30px' }}>
-                  <NutritionProgress title={`Nutritions`} percentage={nutrientCount} />
+                  <NutritionProgress 
+                    title={`Nutritions`} 
+                    // percentage={nutrientCount} 
+                    percentage={nutrientVerticalProgress}
+                  />
                 </div>
               </div>
             </div>
@@ -332,7 +352,7 @@ function App() {
                   axis="y"
                   nodeRef={sunRef}
                   bounds={bounds}
-                  defaultPosition={{ x: 0, y: 0}} 
+                  defaultPosition={{ x: 0, y: 50}} 
                   onDrag={handleSunDrag}
                 >
                   {/* <div className="sun" ref={sunRef}>☀️</div> */}
@@ -353,82 +373,80 @@ function App() {
                 </Draggable>
               </div>
 
-              
-                <div className="plant">
-                  {
-                    isDropped && 
-                      <BirthdayConfetti height={`500px`} width={`500px`} />
-                  }
-                  <DropZone onDrop={handleDrop}>
-                    <div className={`stem ${plantHealth} ${waterEffectClass} ${sunlightEffectClass}`} style={{
-                      height: stemHeight,
-                    }}>
-                      {
-                        plant?.map((item, key) => (
-                          <>
-                            <div
-                              className={`${plantHealth} ${waterEffectClass} ${sunlightEffectClass} leaf`}
-                              style={{
-                                bottom: `${( (stemHeight / (plant?.length)) * key )}px`,
-                                ...(key % 2 === 1 && {
-                                  // transform: `rotate(25deg)`,
-                                  transform: (waterEffectClass === 'neutral') ? `rotate(25deg)` : `rotate(80deg)`,
-                                  borderTopLeftRadius: '100%',
-                                  borderBottomRightRadius: '100%',
-                                  // borderTopRightRadius: '50%',
-                                  // borderTopLeftRadius: '50%',
-                                  // borderBottomRightRadius: '50%',
-                                }),
-                                ...(key % 2 !== 1 && {
-                                  transform: (waterEffectClass === 'neutral') ? `rotate(-25deg)` : `rotate(-80deg)`,
-                                  // transform: `rotate(-25deg)`,
-                                  borderTopRightRadius: '100%',
-                                  borderTopLeftRadius: '0%',
-                                  borderBottomLeftRadius: '100%',
-                                  // borderTopRightRadius: '50%',
-                                  // borderTopLeftRadius: '50%',
-                                  // borderBottomLeftRadius: '50%',
-                                }),
-                                ...(key % 2 === 1 && { right: '0' }),
-                                ...(key % 2 !== 1 && { left: '0' }),
-                                ...(item?.style || {})
-                              }}
-                            >
-                              {/* <div className="line"></div> */}
-                            </div>
-                          </>
-                        ))
-                      }
+              <div className="plant">
+                {
+                  isDropped && 
+                    <BirthdayConfetti height={`500px`} width={`500px`} />
+                }
+                <DropZone onDrop={handleDrop}>
+                  <div className={`stem ${plantHealth} ${waterEffectClass} ${sunlightEffectClass}`} style={{
+                    height: stemHeight,
+                  }}>
+                    {
+                      plant?.map((item, key) => (
+                        <>
+                          <div
+                            className={`${plantHealth} ${waterEffectClass} ${sunlightEffectClass} leaf`}
+                            style={{
+                              bottom: `${( (stemHeight / (plant?.length)) * key )}px`,
+                              ...(key % 2 === 1 && {
+                                // transform: `rotate(25deg)`,
+                                transform: (waterEffectClass === 'neutral') ? `rotate(25deg)` : `rotate(80deg)`,
+                                borderTopLeftRadius: '100%',
+                                borderBottomRightRadius: '100%',
+                                // borderTopRightRadius: '50%',
+                                // borderTopLeftRadius: '50%',
+                                // borderBottomRightRadius: '50%',
+                              }),
+                              ...(key % 2 !== 1 && {
+                                transform: (waterEffectClass === 'neutral') ? `rotate(-25deg)` : `rotate(-80deg)`,
+                                // transform: `rotate(-25deg)`,
+                                borderTopRightRadius: '100%',
+                                borderTopLeftRadius: '0%',
+                                borderBottomLeftRadius: '100%',
+                                // borderTopRightRadius: '50%',
+                                // borderTopLeftRadius: '50%',
+                                // borderBottomLeftRadius: '50%',
+                              }),
+                              ...(key % 2 === 1 && { right: '0' }),
+                              ...(key % 2 !== 1 && { left: '0' }),
+                              ...(item?.style || {})
+                            }}
+                          >
+                            {/* <div className="line"></div> */}
+                          </div>
+                        </>
+                      ))
+                    }
 
-                      {/* <div class={`${plantHealth} leaf leaf01`}>
-                          <div className="line"></div>
-                      </div>
-                      <div class={`${plantHealth} leaf leaf02`}>
-                          <div className="line"></div>
-                      </div>
-                      <div class={`${plantHealth} leaf leaf03`}>
-                          <div className="line"></div>
-                      </div>
-                      <div class={`${plantHealth} leaf leaf04`}>
-                          <div className="line"></div>
-                      </div>
-                      <div class={`${plantHealth} leaf leaf05`}>
-                          <div className="line"></div>
-                      </div>
-                      <div class={`${plantHealth} leaf leaf06`}>
-                          <div className="line"></div>
-                      </div> */}
+                    {/* <div class={`${plantHealth} leaf leaf01`}>
+                        <div className="line"></div>
                     </div>
-                    <div className="pot"></div>
-                    <div className="pot-top"></div>  
-                  </DropZone>
-                </div>
-             
+                    <div class={`${plantHealth} leaf leaf02`}>
+                        <div className="line"></div>
+                    </div>
+                    <div class={`${plantHealth} leaf leaf03`}>
+                        <div className="line"></div>
+                    </div>
+                    <div class={`${plantHealth} leaf leaf04`}>
+                        <div className="line"></div>
+                    </div>
+                    <div class={`${plantHealth} leaf leaf05`}>
+                        <div className="line"></div>
+                    </div>
+                    <div class={`${plantHealth} leaf leaf06`}>
+                        <div className="line"></div>
+                    </div> */}
+                  </div>
+                  <div className="pot"></div>
+                  <div className="pot-top"></div>  
+                </DropZone>
+              </div>
             </div>
           
             <div className="operational-panel">
               <div className="operational-panel-control">
-                <button onClick={() => handleGrowPlant()}>Grow Plant</button>
+                {/* <button onClick={() => handleGrowPlant()}>Grow Plant</button> */}
 
                 <div className="nutrients-container">
                   {/* <h2 className="nutrients-title">Nutrients</h2> */}
@@ -454,13 +472,13 @@ function App() {
                     
                     
                     <div className="nutrients-panel">
-                      <div className="vertical-progress-bar">
+                      {/* <div className="vertical-progress-bar">
                         <div className="vertical-progress-bar-outer">
                           <div className="vertical-progress-bar-inner" style={{
                             height: `${nutrientVerticalProgress}%`
                           }}></div>
                         </div>
-                      </div>
+                      </div> */}
                       <div>
                         <DraggableItem id={1} top={0} data={10}>
                           <img className="nutrient-image" src={nitrogen}/>
