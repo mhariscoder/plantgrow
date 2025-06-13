@@ -25,11 +25,7 @@ function App() {
   const sunRef = useRef(null);
   const sunContainerRef = useRef(null);
   const [stemHeight, setStemHeight] = useState(0);
-  const [plant, setPlant] = useState([
-    {},
-    {},
-    {}
-  ]);
+  const [plant, setPlant] = useState([{},{},{}]);
 
   // global activity
   const [activity, setActivity] = useState(true);
@@ -54,10 +50,16 @@ function App() {
 
   const [waterPoints, setWaterPoints] = useState(0);
   const [sunlightPoints, setSunlightPoints] = useState(0);
+  const [nutrientsPoints, setNutrientsPoints] = useState(0);
+  const [overallPoints, setOverallPoints] = useState(0);
   
   const [bounds, setBounds] = useState({top: 0, bottom: 300});
   const rainIntervalRef = useRef(null);
   const sunIntervalRef = useRef(null);
+
+  useEffect(() => {
+    setOverallPoints(waterPoints+sunlightPoints+nutrientsPoints);
+  }, [waterPoints, sunlightPoints, nutrientsPoints])
 
   useEffect(() => {
     setStemHeight(plant?.length * 50)
@@ -120,7 +122,11 @@ function App() {
       if(nutrientCountProgress === 3) {
         setNutrientCountProgress(0);
         setNutrientVerticalProgress(0);
+        setNutrientsPoints(25);
         handleGrowPlant();
+      }
+      else if(nutrientCountProgress < 3 && nutrientCountProgress !== 0){
+        setNutrientsPoints(15);
       }
     }
   }, [nutrientCountProgress]);
