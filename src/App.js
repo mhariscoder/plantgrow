@@ -7,6 +7,7 @@ import './Plant.css';
 import './Sun.css';
 import './Rain.css';
 import './Nutrient.css';
+import './HealthMeter.css';
 
 import ProgressCircle from './Components/ProgressCircle';
 import SunlightProgress from './Components/SunlightProgress';
@@ -20,6 +21,7 @@ import sunicon from './Assets/sun-icon.png';
 import DropZone from './DropZone';
 import DraggableItem from './DraggableItem';
 import BirthdayConfetti from './BirthdayConfetti';
+import HealthMeter from './Components/HealthMeter';
 
 function App() {
   const sunRef = useRef(null);
@@ -66,25 +68,30 @@ function App() {
   }, [plant]);
 
   useEffect(() => {
-    if (waterLevel === 100) handleStopRain();
+    console.log('waterLevel', waterLevel)
+    
+    if(waterLevel > 0) {
+      if (waterLevel === 100) handleStopRain();
 
-    if(activity) {
-      if (waterLevel > 40 && waterLevel < 60) {
-        setWaterPoints(25);
-        setWaterEffectClass('healthy');
-      } else
-      if (waterLevel < 40) {
-        setWaterPoints(15);
-        setWaterEffectClass('dull');
-      } else
-      if (waterLevel > 60) {
-        setWaterPoints(15);
-        setWaterEffectClass('droopy');
-        setActivity(false);
-      } else {
-        setWaterEffectClass('');
+      if(activity) {
+        if (waterLevel > 40 && waterLevel < 60) {
+          setWaterPoints(25);
+          setWaterEffectClass('healthy');
+        } else
+        if (waterLevel < 40) {
+          setWaterPoints(15);
+          setWaterEffectClass('dull');
+        } else
+        if (waterLevel > 60) {
+          setWaterPoints(15);
+          setWaterEffectClass('droopy');
+          setActivity(false);
+        } else {
+          setWaterEffectClass('');
+        }
       }
     }
+    
   }, [waterLevel]);
 
   useEffect(() => {
@@ -347,9 +354,14 @@ function App() {
                   />
                 </div>
               </div>
+              
             </div>
 
             <div className="visual-panel">
+              <div style={{ marginTop: '30px' }}>
+                <HealthMeter points={overallPoints}/> 
+              </div>
+
               <div 
                 ref={sunContainerRef} 
                 className="sun-container"
