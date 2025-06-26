@@ -290,12 +290,12 @@
 }
 
 .dull {
-	transform: none!important;
+	/* transform: none!important; */
 }
 
 .droopy {
 	filter: brightness(0.7);
-	transform: none!important;
+	/* transform: none!important; */
 }
 
 .drooping {

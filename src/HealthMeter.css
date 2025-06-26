@@ -5,7 +5,7 @@
     position: relative;
     display: inline-flex;
     box-sizing: border-box;
-    animation: 1s animateRating linear;
+    /* animation: 1s animateRating linear; */
   }
   .graph-container *, .graph-container *::before, .graph-container *::after {
     box-sizing: border-box;

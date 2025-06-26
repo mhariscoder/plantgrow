@@ -27,7 +27,7 @@ function App() {
   const sunRef = useRef(null);
   const sunContainerRef = useRef(null);
   const [stemHeight, setStemHeight] = useState(0);
-  const [plant, setPlant] = useState([{},{},{}]);
+  const [plant, setPlant] = useState([{},{},{},{},{},{},{},{},{}]);
 
   // global activity
   const [activity, setActivity] = useState(true);
@@ -68,8 +68,6 @@ function App() {
   }, [plant]);
 
   useEffect(() => {
-    console.log('waterLevel', waterLevel)
-    
     if(waterLevel > 0) {
       if (waterLevel === 100) handleStopRain();
 
@@ -325,6 +323,22 @@ function App() {
     }
   }
 
+  const handleApplyDeadLeavesFunctionality = () => {
+    const addTheDeadLeavesInThePlant = plant.map((item, key) => {
+      let obj = {};
+  
+      if (Math.random() < 0.2) {
+        obj = { dead: true };
+      }
+  
+      return { ...item, ...obj };
+    });
+  
+    setPlant(addTheDeadLeavesInThePlant);
+  };
+  
+  
+
   return (
     <>
       <div className="game-container">
@@ -408,27 +422,23 @@ function App() {
                             style={{
                               bottom: `${( (stemHeight / (plant?.length)) * key )}px`,
                               ...(key % 2 === 1 && {
-                                // transform: `rotate(25deg)`,
-                                transform: (waterEffectClass === 'neutral') ? `rotate(25deg)` : `rotate(80deg)`,
+                                transform: (waterEffectClass === 'neutral' || item?.dead) ? `rotate(0deg)` : `rotate(80deg)`,
                                 borderTopLeftRadius: '100%',
                                 borderBottomRightRadius: '100%',
-                                // borderTopRightRadius: '50%',
-                                // borderTopLeftRadius: '50%',
-                                // borderBottomRightRadius: '50%',
+                                
                               }),
                               ...(key % 2 !== 1 && {
-                                transform: (waterEffectClass === 'neutral') ? `rotate(-25deg)` : `rotate(-80deg)`,
-                                // transform: `rotate(-25deg)`,
+                                transform: (waterEffectClass === 'neutral' || item?.dead) ? `rotate(-0deg)` : `rotate(-80deg)`,
                                 borderTopRightRadius: '100%',
                                 borderTopLeftRadius: '0%',
                                 borderBottomLeftRadius: '100%',
-                                // borderTopRightRadius: '50%',
-                                // borderTopLeftRadius: '50%',
-                                // borderBottomLeftRadius: '50%',
+                                
                               }),
                               ...(key % 2 === 1 && { right: '0' }),
                               ...(key % 2 !== 1 && { left: '0' }),
-                              ...(item?.style || {})
+                              ...(item?.style || {}),
+
+                              ...(item?.dead && { backgroundColor: '#2a492b' })
                             }}
                           >
                             {/* <div className="line"></div> */}
