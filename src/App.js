@@ -27,10 +27,12 @@ function App() {
   const sunRef = useRef(null);
   const sunContainerRef = useRef(null);
   const [stemHeight, setStemHeight] = useState(0);
-  const [plant, setPlant] = useState([{},{},{},{},{},{},{},{},{}]);
+  const [plant, setPlant] = useState([{},{},{},{},{},{},{}]);
 
   // global activity
-  const [activity, setActivity] = useState(true);
+  const [game, setGame] = useState(true);
+  const [pause, setPause] = useState(false);
+  const [deadLeafAction, setDeadLeadAction] = useState(false);
 
   // water states
   const [waterLevel, setWaterLevel] = useState(0);
@@ -40,7 +42,7 @@ function App() {
 
   const [sunlightLevel, setSunlightLevel] = useState(100);
   const [plantHealth, setPlantHealth] = useState('neutral');
-  const [deadLeaves, setDeadLeaves] = useState(3);
+  const [deadLeafs, setDeadLeafs] = useState(3);
   const [showPopup, setShowPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState('');
   const [isRaining, setIsRaining] = useState(false);
@@ -53,6 +55,7 @@ function App() {
   const [waterPoints, setWaterPoints] = useState(0);
   const [sunlightPoints, setSunlightPoints] = useState(0);
   const [nutrientsPoints, setNutrientsPoints] = useState(0);
+  const [deadLeafsPoints, setDeadLeafsPoints] = useState(0);
   const [overallPoints, setOverallPoints] = useState(0);
   
   const [bounds, setBounds] = useState({top: 0, bottom: 300});
@@ -60,30 +63,41 @@ function App() {
   const sunIntervalRef = useRef(null);
 
   useEffect(() => {
-    setOverallPoints(waterPoints+sunlightPoints+nutrientsPoints);
-  }, [waterPoints, sunlightPoints, nutrientsPoints])
+    setOverallPoints(waterPoints+sunlightPoints+nutrientsPoints+deadLeafsPoints);
+  }, [waterPoints, sunlightPoints, nutrientsPoints, deadLeafsPoints])
 
   useEffect(() => {
-    setStemHeight(plant?.length * 50)
+    setStemHeight(plant?.length * 50);
+
+    if(deadLeafAction) {
+      const findDeadLeavesOnPlant = plant.find(x => x.dead === true);
+      if(!findDeadLeavesOnPlant) {
+        if(sunlightEffectClass !== 'burnt') setPause(false);
+        setDeadLeafsPoints(25);
+      }
+      else setDeadLeafsPoints(0);
+    }
   }, [plant]);
 
   useEffect(() => {
     if(waterLevel > 0) {
       if (waterLevel === 100) handleStopRain();
 
-      if(activity) {
+      if(!pause) {
         if (waterLevel > 40 && waterLevel < 60) {
           setWaterPoints(25);
-          setWaterEffectClass('healthy');
+          // setWaterEffectClass('healthy');
+          handleGrowPlant();
         } else
         if (waterLevel < 40) {
           setWaterPoints(15);
-          setWaterEffectClass('dull');
+          // setWaterEffectClass('dull');
         } else
         if (waterLevel > 60) {
           setWaterPoints(15);
-          setWaterEffectClass('droopy');
-          setActivity(false);
+          handleApplyDeadLeafsFunctionality();
+          // setWaterEffectClass('droopy');
+          setPause(true);
         } else {
           setWaterEffectClass('');
         }
@@ -94,10 +108,11 @@ function App() {
 
   useEffect(() => {
     const sunlevel = (100 - sunlightLevel);
-    if(activity) {
+    if(!pause) {
       if(sunlevel < 25 && sunlevel > 15) {
-        setSunlightEffectClass('vibrant');
+        // setSunlightEffectClass('vibrant');
         setSunlightPoints(25);
+        handleGrowNewLeavesOnRemovableLocation();
       }
   
       if(sunlevel < 45 && sunlevel > 25) {
@@ -107,8 +122,9 @@ function App() {
       
       if(sunlevel > 55) {
         setSunlightEffectClass('burnt');
-        setSunlightPoints(15);
-        setActivity(false);
+        // setSunlightPoints(15);
+        setGame(false);
+        handleResetAllPoints();
       }
     }
   }, [sunlightLevel])
@@ -123,7 +139,7 @@ function App() {
   }, [isDropped])
 
   useEffect(() => {
-    if(activity) {
+    if(!pause) {
       if(nutrientCountProgress === 3) {
         setNutrientCountProgress(0);
         setNutrientVerticalProgress(0);
@@ -197,10 +213,10 @@ function App() {
     setTimeout(() => setShowPopup(false), 3000);
   };
 
-  const pruneLeaves = () => {
-    if (deadLeaves > 0) {
-      setDeadLeaves(deadLeaves - 1);
-      showFeedback('Dead leaves removed. Plant visibly stronger!');
+  const pruneLeafs = () => {
+    if (deadLeafs > 0) {
+      setDeadLeafs(deadLeafs - 1);
+      showFeedback('Dead leafs removed. Plant visibly stronger!');
     }
   };
 
@@ -215,44 +231,48 @@ function App() {
   // }
 
   const handleGrowPlant = () => {
-    if (plant?.length <= 11) {
-      setPlant((prevPlant) => {
-        const newPlant = [...prevPlant, { style: { height: 0, width: 0 } }];
-        return newPlant;
-      });
-  
-      setTimeout(() => {
+    console.log(game, !pause)
+    if(game && !pause) {
+      if (plant?.length <= 11) {
         setPlant((prevPlant) => {
-          const updatedPlant = prevPlant.map((item, index) => {
-            if (index === plant.length) {
-              return { style: {} };
-            }
-            return item;
-          });
-          return updatedPlant;
+          const newPlant = [...prevPlant, { style: { height: 0, width: 0 } }];
+          return newPlant;
         });
-      }, 1000);
+    
+        setTimeout(() => {
+          setPlant((prevPlant) => {
+            const updatedPlant = prevPlant.map((item, index) => {
+              if (index === plant.length) {
+                return { style: {} };
+              }
+              return item;
+            });
+            return updatedPlant;
+          });
+        }, 1000);
+      }
     }
   };
 
   const handleStartRain = () => {
-    if(activity) {
-      if(waterLevel < 100) {
+    console.log(game, !pause)
+    if(game && !pause) {
+      // if(waterLevel < 100) {
         setIsRaining(true);
   
         if (rainIntervalRef.current) clearInterval(rainIntervalRef.current);
   
         rainIntervalRef.current = setInterval(() => {
           setWaterLevel(prev => {
-            if (prev < 100) {
+            // if (prev < 100) {
               return prev + 1;
-            } else {
-              clearInterval(rainIntervalRef.current);
-              return 100;
-            }
+            // } else {
+            //   clearInterval(rainIntervalRef.current);
+            //   return 100;
+            // }
           });
         }, 100);
-      }
+      // }
     }
   }
 
@@ -267,32 +287,36 @@ function App() {
   }
 
   const handleDrop = (event) => {
-    const { active, over } = event; // Get active draggable item and where it's dropped
+    console.log(game, !pause)
+    if(game && !pause) {
+      const { active, over } = event; // Get active draggable item and where it's dropped
 
-    // Only trigger handleDrop if the draggable item was dropped into DropZone
-    if (activity && over && over.id === 'dropzone') {
-      const itemId = active.id;  // Get the dropped item's id
-      const itemData = active.data.current.customData;  // Get any custom data from the draggable item
+      // Only trigger handleDrop if the draggable item was dropped into DropZone
+      if (over && over.id === 'dropzone') {
+        const itemId = active.id;  // Get the dropped item's id
+        const itemData = active.data.current.customData;  // Get any custom data from the draggable item
 
-      // console.log("Item Dropped:", itemId, "Data:", itemData);
+        // console.log("Item Dropped:", itemId, "Data:", itemData);
 
-      // Update the nutrient count based on the dropped item's data
-      const incrementValue = itemData || 0;
-      setNutrientCount((prevCount) => {
-        const newCount = prevCount + incrementValue;
-        return newCount > 100 ? 100 : newCount;
-      });
+        // Update the nutrient count based on the dropped item's data
+        const incrementValue = itemData || 0;
+        setNutrientCount((prevCount) => {
+          const newCount = prevCount + incrementValue;
+          return newCount > 100 ? 100 : newCount;
+        });
 
-      // Store the dropped item data (optional)
-      setDroppedItems((prevItems) => [...prevItems, itemData]);
-      setIsDropped(true);
-      setNutrientCountProgress(nutrientCountProgress+1);
-      setNutrientVerticalProgress(nutrientVerticalProgress+33.33);
+        // Store the dropped item data (optional)
+        setDroppedItems((prevItems) => [...prevItems, itemData]);
+        setIsDropped(true);
+        setNutrientCountProgress(nutrientCountProgress+1);
+        setNutrientVerticalProgress(nutrientVerticalProgress+33.33);
+      }
     }
   };
 
   const handleStartSunlight = () => {
-    if(activity) {
+    console.log(game, !pause)
+    if(game && !pause) {
       if(sunlightLevel > 0) {
         if (sunIntervalRef.current) clearInterval(sunIntervalRef.current);
   
@@ -323,21 +347,60 @@ function App() {
     }
   }
 
-  const handleApplyDeadLeavesFunctionality = () => {
-    const addTheDeadLeavesInThePlant = plant.map((item, key) => {
-      let obj = {};
-  
-      if (Math.random() < 0.2) {
-        obj = { dead: true };
-      }
-  
-      return { ...item, ...obj };
-    });
-  
-    setPlant(addTheDeadLeavesInThePlant);
+  const handleApplyDeadLeafsFunctionality = () => {
+    console.log(game, !pause)
+    if(game && !pause) {
+      setDeadLeadAction(true);
+      const addTheDeadLeafsInThePlant = plant.map((item, key) => {
+        let obj = {};
+    
+        if (Math.random() < 0.3 && (!item?.remove)) {
+
+          obj = { dead: true };
+        }
+    
+        return { ...item, ...obj };
+      });
+    
+      setPlant(addTheDeadLeafsInThePlant);
+    }
   };
-  
-  
+
+  const handleRemoveDeadLeaf = (_item, _key) => {
+    if(game) {
+      setPlant(plant.map((item, key) => {
+        let obj = {};
+    
+        if (key === _key && _item?.dead === true) {
+          delete item.dead;
+          obj = { remove: true };
+        }
+    
+        return { ...item, ...obj };
+      }));
+    }
+  }
+
+  const handleGrowNewLeavesOnRemovableLocation = () => {
+    console.log(game, !pause)
+    if(game && !pause) {
+      const growNewLeafs = plant.map((item) => {
+        if (item?.remove === true) delete item.remove;
+        if (item?.vanish === true) delete item.vanish;
+    
+        return item;
+      });
+
+      setPlant(growNewLeafs);
+    }
+  }
+
+  const handleResetAllPoints = () => {
+    setWaterPoints(0);
+    setSunlightPoints(0);
+    setNutrientsPoints(0);
+    setDeadLeafsPoints(0);
+  }
 
   return (
     <>
@@ -353,7 +416,7 @@ function App() {
             {/* <div className={`plant ${plantHealth}`} /> */}
 
             <div className="result-panel">
-              <div className="progress-container">
+              {/* <div className="progress-container">
                 <div style={{ marginBottom: '30px' }}>
                   <ProgressCircle level={waterLevel} defaultColor={`blue`} title={`Water`} />
                 </div>
@@ -367,14 +430,14 @@ function App() {
                     percentage={nutrientVerticalProgress}
                   />
                 </div>
-              </div>
-              
-            </div>
-
-            <div className="visual-panel">
+              </div> */}
               <div style={{ marginTop: '30px' }}>
                 <HealthMeter points={overallPoints}/> 
               </div>
+            </div>
+
+            <div className="visual-panel">
+              
 
               <div 
                 ref={sunContainerRef} 
@@ -417,32 +480,47 @@ function App() {
                     {
                       plant?.map((item, key) => (
                         <>
-                          <div
-                            className={`${plantHealth} ${waterEffectClass} ${sunlightEffectClass} leaf`}
-                            style={{
-                              bottom: `${( (stemHeight / (plant?.length)) * key )}px`,
-                              ...(key % 2 === 1 && {
-                                transform: (waterEffectClass === 'neutral' || item?.dead) ? `rotate(0deg)` : `rotate(80deg)`,
-                                borderTopLeftRadius: '100%',
-                                borderBottomRightRadius: '100%',
-                                
-                              }),
-                              ...(key % 2 !== 1 && {
-                                transform: (waterEffectClass === 'neutral' || item?.dead) ? `rotate(-0deg)` : `rotate(-80deg)`,
-                                borderTopRightRadius: '100%',
-                                borderTopLeftRadius: '0%',
-                                borderBottomLeftRadius: '100%',
-                                
-                              }),
-                              ...(key % 2 === 1 && { right: '0' }),
-                              ...(key % 2 !== 1 && { left: '0' }),
-                              ...(item?.style || {}),
+                          {
+                            !item?.remove &&
+                            <div
+                              onClick={() => handleRemoveDeadLeaf(item, key)}
+                              className={`${plantHealth} ${waterEffectClass} ${sunlightEffectClass} leaf`}
+                              style={{
+                                bottom: `${( (stemHeight / (plant?.length)) * key )}px`,
+                                ...(key % 2 === 1 && {
+                                  transform: (waterEffectClass === 'neutral' || item?.dead) ? `rotate(0deg)` : `rotate(80deg)`,
+                                  borderTopLeftRadius: '100%',
+                                  borderBottomRightRadius: '100%',
+                                  
+                                }),
+                                ...(key % 2 !== 1 && {
+                                  transform: (waterEffectClass === 'neutral' || item?.dead) ? `rotate(-0deg)` : `rotate(-80deg)`,
+                                  borderTopRightRadius: '100%',
+                                  borderTopLeftRadius: '0%',
+                                  borderBottomLeftRadius: '100%',
+                                  
+                                }),
+                                ...(key % 2 === 1 && { right: '0' }),
+                                ...(key % 2 !== 1 && { left: '0' }),
+                                ...(item?.style || {}),
 
-                              ...(item?.dead && { backgroundColor: '#2a492b' })
-                            }}
-                          >
-                            {/* <div className="line"></div> */}
-                          </div>
+                                ...(item?.dead && { backgroundColor: '#2a492b' })
+                              }}
+                            >
+                              {
+                                item?.dead &&
+                                  <div className="dead-lead-popup" 
+                                    style={{
+                                      ...(key % 2 === 1 && { right: '100%' }),
+                                      ...(key % 2 !== 1 && { left: '100%' }),
+                                    }}
+                                  >
+                                    <label>Please remove the dead leaf by clicking on it.</label>
+                                  </div>
+                              }
+                              {/* <div className="line"></div> */}
+                            </div>
+                          }
                         </>
                       ))
                     }
@@ -536,8 +614,8 @@ function App() {
                 </div>
               </Draggable>
               
-              {Array.from({ length: deadLeaves }, (_, i) => (
-                <div key={i} className="dead-leaf" onClick={pruneLeaves}>
+              {Array.from({ length: deadLeafs }, (_, i) => (
+                <div key={i} className="dead-leaf" onClick={pruneLeafs}>
                   🍂
                 </div>
               ))}

@@ -18,7 +18,7 @@
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
+    /* justify-content: flex-end; */
     overflow: hidden;
 }
 
@@ -93,6 +93,7 @@
 .plant {
 	margin-top: auto;
 	position: relative;
+	
 }
 
 .pot {
@@ -134,7 +135,7 @@
 	height: 50px;
 	/* border-radius:50%; */
 	background: #159315;
-	
+	cursor: pointer;
 }
 
 .leaf .line {
@@ -372,7 +373,8 @@ button {
 	filter: brightness(1.2);
 }
 .pale {
-	background-color: #85ae86 !important;
+	/* background-color: #85ae86 !important; */
+	background-color: #507e51;
 }
 .stem.pale {
 	background-image: radial-gradient(#85ae86, #5c685d) !important;
@@ -382,4 +384,24 @@ button {
 }
 .stem.burnt {
 	background-image: radial-gradient(#5A4E3C, #312a20) !important;
+}
+
+
+/*Dead leaves*/
+.dead-lead-popup {
+	position: absolute;
+    width: 150px;
+    background-color: #99efff;
+    border-radius: 10px;
+    bottom: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 10px;
+    box-sizing: border-box;
+}
+
+.dead-lead-popup label {
+	font-weight: 600;
+    font-size: 11px;
 }
