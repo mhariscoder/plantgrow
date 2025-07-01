@@ -112,12 +112,12 @@ function App() {
       if(sunlevel < 25 && sunlevel > 15) {
         // setSunlightEffectClass('vibrant');
         setSunlightPoints(25);
-        handleGrowNewLeavesOnRemovableLocation();
       }
   
       if(sunlevel < 45 && sunlevel > 25) {
         setSunlightEffectClass('pale');
         setSunlightPoints(15);
+        handleApplyDroopLeafsFunctionality();
       }
       
       if(sunlevel > 55) {
@@ -145,6 +145,7 @@ function App() {
         setNutrientVerticalProgress(0);
         setNutrientsPoints(25);
         handleGrowPlant();
+        handleGrowNewLeavesOnRemovableLocation();
       }
       else if(nutrientCountProgress < 3 && nutrientCountProgress !== 0){
         setNutrientsPoints(15);
@@ -287,25 +288,19 @@ function App() {
   }
 
   const handleDrop = (event) => {
-    console.log(game, !pause)
     if(game && !pause) {
-      const { active, over } = event; // Get active draggable item and where it's dropped
+      const { active, over } = event;
 
-      // Only trigger handleDrop if the draggable item was dropped into DropZone
       if (over && over.id === 'dropzone') {
-        const itemId = active.id;  // Get the dropped item's id
-        const itemData = active.data.current.customData;  // Get any custom data from the draggable item
+        const itemId = active.id;
+        const itemData = active.data.current.customData;
 
-        // console.log("Item Dropped:", itemId, "Data:", itemData);
-
-        // Update the nutrient count based on the dropped item's data
         const incrementValue = itemData || 0;
         setNutrientCount((prevCount) => {
           const newCount = prevCount + incrementValue;
           return newCount > 100 ? 100 : newCount;
         });
 
-        // Store the dropped item data (optional)
         setDroppedItems((prevItems) => [...prevItems, itemData]);
         setIsDropped(true);
         setNutrientCountProgress(nutrientCountProgress+1);
@@ -315,7 +310,6 @@ function App() {
   };
 
   const handleStartSunlight = () => {
-    console.log(game, !pause)
     if(game && !pause) {
       if(sunlightLevel > 0) {
         if (sunIntervalRef.current) clearInterval(sunIntervalRef.current);
@@ -324,7 +318,6 @@ function App() {
           setSunlightLevel((
             prev => {
               if (prev <= 100) {
-                // console.log('prev - 1', prev - 1)
                 return prev - 1;
               } else {
                 clearInterval(sunIntervalRef.current);
@@ -348,21 +341,32 @@ function App() {
   }
 
   const handleApplyDeadLeafsFunctionality = () => {
-    console.log(game, !pause)
     if(game && !pause) {
       setDeadLeadAction(true);
       const addTheDeadLeafsInThePlant = plant.map((item, key) => {
         let obj = {};
     
-        if (Math.random() < 0.3 && (!item?.remove)) {
-
-          obj = { dead: true };
-        }
-    
+        if (Math.random() < 0.3 && (!item?.remove)) obj = { dead: true };
         return { ...item, ...obj };
       });
     
       setPlant(addTheDeadLeafsInThePlant);
+    }
+  };
+
+  const handleApplyDroopLeafsFunctionality = () => {
+    if(game && !pause) {
+      const findIfNotExistTheDrooping = plant.find(x => x.droop === true);
+      if(!findIfNotExistTheDrooping) {
+        const addTheDroopLeafsInThePlant = plant.map((item, key) => {
+          let obj = {};
+      
+          if (Math.random() < 0.3 && (!item?.remove)) obj = { droop: true };
+          return { ...item, ...obj };
+        });
+      
+        setPlant(addTheDroopLeafsInThePlant);
+      }
     }
   };
 
@@ -382,11 +386,10 @@ function App() {
   }
 
   const handleGrowNewLeavesOnRemovableLocation = () => {
-    console.log(game, !pause)
     if(game && !pause) {
       const growNewLeafs = plant.map((item) => {
         if (item?.remove === true) delete item.remove;
-        if (item?.vanish === true) delete item.vanish;
+        if (item?.droop === true) delete item.droop;
     
         return item;
       });
@@ -416,29 +419,29 @@ function App() {
             {/* <div className={`plant ${plantHealth}`} /> */}
 
             <div className="result-panel">
-              {/* <div className="progress-container">
-                <div style={{ marginBottom: '30px' }}>
-                  <ProgressCircle level={waterLevel} defaultColor={`blue`} title={`Water`} />
-                </div>
-                <div style={{ marginBottom: '30px' }}>
-                  <SunlightProgress level={sunlightLevel}/>
-                </div>
-                <div style={{ marginBottom: '30px' }}>
-                  <NutritionProgress 
-                    title={`Nutritions`} 
-                    // percentage={nutrientCount} 
-                    percentage={nutrientVerticalProgress}
-                  />
-                </div>
-              </div> */}
+              {/* 
+                <div className="progress-container">
+                  <div style={{ marginBottom: '30px' }}>
+                    <ProgressCircle level={waterLevel} defaultColor={`blue`} title={`Water`} />
+                  </div>
+                  <div style={{ marginBottom: '30px' }}>
+                    <SunlightProgress level={sunlightLevel}/>
+                  </div>
+                  <div style={{ marginBottom: '30px' }}>
+                    <NutritionProgress 
+                      title={`Nutritions`} 
+                      // percentage={nutrientCount} 
+                      percentage={nutrientVerticalProgress}
+                    />
+                  </div>
+                </div> 
+              */}
               <div style={{ marginTop: '30px' }}>
                 <HealthMeter points={overallPoints}/> 
               </div>
             </div>
 
             <div className="visual-panel">
-              
-
               <div 
                 ref={sunContainerRef} 
                 className="sun-container"
@@ -481,45 +484,45 @@ function App() {
                       plant?.map((item, key) => (
                         <>
                           {
-                            !item?.remove &&
-                            <div
-                              onClick={() => handleRemoveDeadLeaf(item, key)}
-                              className={`${plantHealth} ${waterEffectClass} ${sunlightEffectClass} leaf`}
-                              style={{
-                                bottom: `${( (stemHeight / (plant?.length)) * key )}px`,
-                                ...(key % 2 === 1 && {
-                                  transform: (waterEffectClass === 'neutral' || item?.dead) ? `rotate(0deg)` : `rotate(80deg)`,
-                                  borderTopLeftRadius: '100%',
-                                  borderBottomRightRadius: '100%',
-                                  
-                                }),
-                                ...(key % 2 !== 1 && {
-                                  transform: (waterEffectClass === 'neutral' || item?.dead) ? `rotate(-0deg)` : `rotate(-80deg)`,
-                                  borderTopRightRadius: '100%',
-                                  borderTopLeftRadius: '0%',
-                                  borderBottomLeftRadius: '100%',
-                                  
-                                }),
-                                ...(key % 2 === 1 && { right: '0' }),
-                                ...(key % 2 !== 1 && { left: '0' }),
-                                ...(item?.style || {}),
+                            (!item?.remove) &&
+                              <div
+                                onClick={() => handleRemoveDeadLeaf(item, key)}
+                                className={`${plantHealth} ${waterEffectClass} ${sunlightEffectClass} ${(item?.droop) ? `droop` : ``} leaf`}
+                                style={{
+                                  bottom: `${( (stemHeight / (plant?.length)) * key )}px`,
+                                  ...(key % 2 === 1 && {
+                                    transform: (waterEffectClass === 'neutral' || item?.dead) ? `rotate(0deg)` : `rotate(80deg)`,
+                                    borderTopLeftRadius: '100%',
+                                    borderBottomRightRadius: '100%',
+                                    
+                                  }),
+                                  ...(key % 2 !== 1 && {
+                                    transform: (waterEffectClass === 'neutral' || item?.dead) ? `rotate(-0deg)` : `rotate(-80deg)`,
+                                    borderTopRightRadius: '100%',
+                                    borderTopLeftRadius: '0%',
+                                    borderBottomLeftRadius: '100%',
+                                    
+                                  }),
+                                  ...(key % 2 === 1 && { right: '0' }),
+                                  ...(key % 2 !== 1 && { left: '0' }),
+                                  ...(item?.style || {}),
 
-                                ...(item?.dead && { backgroundColor: '#2a492b' })
-                              }}
-                            >
-                              {
-                                item?.dead &&
-                                  <div className="dead-lead-popup" 
-                                    style={{
-                                      ...(key % 2 === 1 && { right: '100%' }),
-                                      ...(key % 2 !== 1 && { left: '100%' }),
-                                    }}
-                                  >
-                                    <label>Please remove the dead leaf by clicking on it.</label>
-                                  </div>
-                              }
-                              {/* <div className="line"></div> */}
-                            </div>
+                                  ...(item?.dead && { backgroundColor: '#2a492b' })
+                                }}
+                              >
+                                {
+                                  item?.dead &&
+                                    <div className="dead-lead-popup" 
+                                      style={{
+                                        ...(key % 2 === 1 && { right: '100%' }),
+                                        ...(key % 2 !== 1 && { left: '100%' }),
+                                      }}
+                                    >
+                                      <label>Please remove the dead leaf by clicking on it.</label>
+                                    </div>
+                                }
+                                {/* <div className="line"></div> */}
+                              </div>
                           }
                         </>
                       ))

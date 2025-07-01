@@ -7,6 +7,7 @@
 	background-repeat: no-repeat;
 	background-size: cover;
 	background-position: bottom left;
+	overflow: hidden;
 }
 
 .result-panel {
@@ -93,7 +94,6 @@
 .plant {
 	margin-top: auto;
 	position: relative;
-	
 }
 
 .pot {
@@ -136,6 +136,7 @@
 	/* border-radius:50%; */
 	background: #159315;
 	cursor: pointer;
+	
 }
 
 .leaf .line {
@@ -261,7 +262,6 @@
 	}
 } 
 
-
 /* .plant {
   width: 100px;
   height: 150px;
@@ -365,8 +365,6 @@ button {
 	}
 }
 
-
-
 /* Sun light effects on plant */
 .stem.vibrant {
 	transform: scale(1.2)!important;
@@ -386,7 +384,6 @@ button {
 	background-image: radial-gradient(#5A4E3C, #312a20) !important;
 }
 
-
 /*Dead leaves*/
 .dead-lead-popup {
 	position: absolute;
@@ -404,4 +401,17 @@ button {
 .dead-lead-popup label {
 	font-weight: 600;
     font-size: 11px;
+}
+
+.droop {
+	animation: rotateAndDescend 5s ease-out forwards;
+}
+
+@keyframes rotateAndDescend {
+	0% {
+	  transform: translateY(0) rotate(0deg);
+	}
+	100% {
+	  transform: translateY(80vh) rotate(1440deg);
+	}
 }
