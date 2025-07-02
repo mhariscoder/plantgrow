@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { DndContext} from "@dnd-kit/core";
 import Draggable from 'react-draggable';
 import RainCanvas from './Components/RainCanvas';
+
 import './App.css';
 import './Plant.css';
 import './Sun.css';
@@ -153,61 +154,6 @@ function App() {
     }
   }, [nutrientCountProgress]);
 
-  const handleWaterPlant = () => {
-    const newLevel = Math.min(waterLevel + 10, 100);
-    setWaterLevel(newLevel);
-    evaluatePlant(newLevel, sunlightLevel);
-  };
-
-  const handleSunDrag = (e, data) => {
-    // const container = sunContainerRef.current;
-    // const sun = sunRef.current;
-  
-    // if (container && sun) {
-    //   const containerHeight = container.offsetHeight;
-    //   const sunTop = data?.y || 0;
-  
-    //   const sunlevel = (sunTop / (containerHeight - sun.offsetHeight)) * 100;
-    //   let level = 100 - sunlevel;
-  
-    //   level = Math.min(Math.max(level, 0), 100);
-  
-    //   setSunlightLevel(level);
-    //   evaluatePlant(waterLevel, level);
-
-    //   // if(sunlevel < 25) {
-    //   //   setSunlightEffectClass('vibrant');
-    //   // }
-
-    //   // if(sunlevel < 45 && sunlevel > 25) {
-    //   //   setSunlightEffectClass('pale');
-    //   // }
-      
-    //   // if(sunlevel > 55) {
-    //   //   setSunlightEffectClass('burnt');
-    //   // }
-    // }
-  };
-
-  const evaluatePlant = (water, sun) => {
-    // actual sun location should be 50
-    // if( sun < 10 ) setPlantHealth('drooping');
-    // if( sun > 10 && sun < 80 ) setPlantHealth('happy');
-    // // if( sun > 80 ) setPlantHealth('thirsty');
-    // if( sun > 80 ) setPlantHealth('neutral');
-
-    // if (water > 60 || sun > 60) {
-    //   setPlantHealth('drooping');
-    //   showFeedback('Too much care can be overwhelming.');
-    // } else if (water < 30 || sun < 30) {
-    //   setPlantHealth('thirsty');
-    //   showFeedback('Neglect causes stagnation.');
-    // } else {
-    //   setPlantHealth('happy');
-    //   showFeedback('Balance helps everything thrive.');
-    // }
-  };
-
   const showFeedback = (msg) => {
     setPopupMessage(msg);
     setShowPopup(true);
@@ -224,12 +170,6 @@ function App() {
   const addNutrient = (nutrient) => {
     showFeedback(`Added ${nutrient}. The plant grows stronger.`);
   };
-
-  // const handleGrowPlant = () => {
-  //   if(plant?.length <= 11) setPlant([...plant, {
-  //     // style: {height: 0, width: 0}
-  //   }])
-  // }
 
   const handleGrowPlant = () => {
     console.log(game, !pause)
@@ -405,6 +345,67 @@ function App() {
     setDeadLeafsPoints(0);
   }
 
+  // const handleGrowPlant = () => {
+  //   if(plant?.length <= 11) setPlant([...plant, {
+  //     // style: {height: 0, width: 0}
+  //   }])
+  // }
+
+  // const handleSunDrag = (e, data) => {
+    // const container = sunContainerRef.current;
+    // const sun = sunRef.current;
+  
+    // if (container && sun) {
+    //   const containerHeight = container.offsetHeight;
+    //   const sunTop = data?.y || 0;
+  
+    //   const sunlevel = (sunTop / (containerHeight - sun.offsetHeight)) * 100;
+    //   let level = 100 - sunlevel;
+  
+    //   level = Math.min(Math.max(level, 0), 100);
+  
+    //   setSunlightLevel(level);
+    //   evaluatePlant(waterLevel, level);
+
+    //   // if(sunlevel < 25) {
+    //   //   setSunlightEffectClass('vibrant');
+    //   // }
+
+    //   // if(sunlevel < 45 && sunlevel > 25) {
+    //   //   setSunlightEffectClass('pale');
+    //   // }
+      
+    //   // if(sunlevel > 55) {
+    //   //   setSunlightEffectClass('burnt');
+    //   // }
+    // }
+  // };
+
+  // const evaluatePlant = (water, sun) => {
+    // actual sun location should be 50
+    // if( sun < 10 ) setPlantHealth('drooping');
+    // if( sun > 10 && sun < 80 ) setPlantHealth('happy');
+    // // if( sun > 80 ) setPlantHealth('thirsty');
+    // if( sun > 80 ) setPlantHealth('neutral');
+
+    // if (water > 60 || sun > 60) {
+    //   setPlantHealth('drooping');
+    //   showFeedback('Too much care can be overwhelming.');
+    // } else if (water < 30 || sun < 30) {
+    //   setPlantHealth('thirsty');
+    //   showFeedback('Neglect causes stagnation.');
+    // } else {
+    //   setPlantHealth('happy');
+    //   showFeedback('Balance helps everything thrive.');
+    // }
+  // };
+
+  // const handleWaterPlant = () => {
+  //   const newLevel = Math.min(waterLevel + 10, 100);
+  //   setWaterLevel(newLevel);
+  //   evaluatePlant(newLevel, sunlightLevel);
+  // };
+
   return (
     <>
       <div className="game-container">
@@ -451,7 +452,7 @@ function App() {
                   nodeRef={sunRef}
                   bounds={bounds}
                   defaultPosition={{ x: 0, y: 50}} 
-                  onDrag={handleSunDrag}
+                  // onDrag={handleSunDrag}
                 >
                   {/* <div className="sun" ref={sunRef}>☀️</div> */}
                   <div className={`${sunEffectClass} sun theSun`} ref={sunRef} style={{transform: "translate(0px, 100px)"}}>
