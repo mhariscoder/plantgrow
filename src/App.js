@@ -589,8 +589,6 @@ function App() {
                     >
                       <img src={rain} alt="Rain" className="rain-image" />
                     </button>
-
-                    
                     
                     <div className="nutrients-panel">
                       <div className="vertical-progress-bar">
