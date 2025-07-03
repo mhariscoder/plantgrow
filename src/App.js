@@ -540,7 +540,9 @@ function App() {
                                         ...(key % 2 !== 1 && { left: '100%' }),
                                       }}
                                     >
-                                      <label>Sometimes, you must remove what no longer serves growth.</label>
+                                      {
+                                        (sunlightEffectClass !== 'burnt') && <label>Sometimes, you must remove what no longer serves growth.</label>
+                                      }
                                     </div>
                                 }
                                 {/* <div className="line"></div> */}
