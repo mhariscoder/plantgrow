@@ -66,6 +66,9 @@ function App() {
 
   useEffect(() => {
     setOverallPoints(waterPoints+sunlightPoints+nutrientsPoints+deadLeafsPoints);
+
+    //grow new leaves on the combination of the water and sunlight effects
+    if((waterPoints+sunlightPoints) > 30) handleGrowPlant();
   }, [waterPoints, sunlightPoints, nutrientsPoints, deadLeafsPoints])
 
   useEffect(() => {
@@ -91,7 +94,6 @@ function App() {
         if (waterLevel > 40 && waterLevel < 60) {
           setWaterPoints(25);
           // setWaterEffectClass('healthy');
-          handleGrowPlant();
         } else
         if (waterLevel < 40) {
           setWaterPoints(15);
@@ -121,7 +123,6 @@ function App() {
         setSunlightEffectClass('pale');
         setSunlightPoints(15);
         handleApplyDeadLeafsFunctionality();
-        
       }
       
       if(sunlevel > 55) {
@@ -148,6 +149,11 @@ function App() {
         setNutrientCountProgress(0);
         setNutrientVerticalProgress(0);
         setNutrientsPoints(25);
+
+        handleResetWaterLevel();
+        handleResetSunlighLevel();
+        setSunlightEffectClass('');
+
         handleGrowPlant();
         handleGrowNewLeavesOnRemovableLocation();
       }
@@ -289,7 +295,7 @@ function App() {
       const addTheDeadLeafsInThePlant = plant.map((item, key) => {
         let obj = {};
     
-        if (Math.random() < 0.3 && (!item?.remove)) obj = { dead: true };
+        if (Math.random() < 0.3 && (!item?.remove && !item?.dead && !item?.droop)) obj = { dead: true };
         return { ...item, ...obj };
       });
     
@@ -304,7 +310,7 @@ function App() {
         const addTheDroopLeafsInThePlant = plant.map((item, key) => {
           let obj = {};
       
-          if (Math.random() < 0.3 && (!item?.remove)) obj = { droop: true };
+          if (Math.random() < 0.3 && (!item?.remove && !item?.dead && !item?.droop)) obj = { droop: true };
           return { ...item, ...obj };
         });
       
@@ -466,7 +472,11 @@ function App() {
                   // onDrag={handleSunDrag}
                 >
                   {/* <div className="sun" ref={sunRef}>☀️</div> */}
-                  <div className={`${sunEffectClass} sun theSun`} ref={sunRef} style={{transform: "translate(0px, 100px)"}}>
+                  <div 
+                    className={`${sunEffectClass} sun theSun`} 
+                    ref={sunRef} 
+                    style={{transform: "translate(0px, 100px)"}}
+                  >
                     <div className="ray_box">
                       <div className="ray ray1"></div>
                       <div className="ray ray2"></div>
@@ -530,7 +540,7 @@ function App() {
                                         ...(key % 2 !== 1 && { left: '100%' }),
                                       }}
                                     >
-                                      <label>Please remove the dead leaf by clicking on it.</label>
+                                      <label>Sometimes, you must remove what no longer serves growth.</label>
                                     </div>
                                 }
                                 {/* <div className="line"></div> */}
