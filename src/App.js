@@ -17,6 +17,7 @@ import NutritionProgress from './Components/NutritionProgress';
 import nitrogen from './Assets/nitrogen.png';
 import phosphorus from './Assets/phosphorus.png';
 import potassium from './Assets/potassium.png';
+import magnesium from './Assets/magnesium.png';
 import rain from './Assets/rain.png';
 import sunicon from './Assets/sun-icon.png';
 import DropZone from './DropZone';
@@ -81,6 +82,8 @@ function App() {
   }, [plant]);
 
   useEffect(() => {
+    console.log('waterLevel', waterLevel);
+
     if(waterLevel > 0) {
       if (waterLevel === 100) handleStopRain();
 
@@ -96,9 +99,8 @@ function App() {
         } else
         if (waterLevel > 60) {
           setWaterPoints(15);
-          handleApplyDeadLeafsFunctionality();
+          handleApplyDroopLeafsFunctionality();
           // setWaterEffectClass('droopy');
-          setPause(true);
         } else {
           setWaterEffectClass('');
         }
@@ -118,7 +120,8 @@ function App() {
       if(sunlevel < 45 && sunlevel > 25) {
         setSunlightEffectClass('pale');
         setSunlightPoints(15);
-        handleApplyDroopLeafsFunctionality();
+        handleApplyDeadLeafsFunctionality();
+        
       }
       
       if(sunlevel > 55) {
@@ -343,6 +346,14 @@ function App() {
     setSunlightPoints(0);
     setNutrientsPoints(0);
     setDeadLeafsPoints(0);
+  }
+
+  const handleResetWaterLevel = () => {
+    setWaterLevel(0);
+  }
+
+  const handleResetSunlighLevel = () => {
+    setSunlightLevel(100);
   }
 
   // const handleGrowPlant = () => {
@@ -582,13 +593,13 @@ function App() {
                     
                     
                     <div className="nutrients-panel">
-                      {/* <div className="vertical-progress-bar">
+                      <div className="vertical-progress-bar">
                         <div className="vertical-progress-bar-outer">
                           <div className="vertical-progress-bar-inner" style={{
                             height: `${nutrientVerticalProgress}%`
                           }}></div>
                         </div>
-                      </div> */}
+                      </div>
                       <div>
                         <DraggableItem id={1} top={0} data={10}>
                           <img className="nutrient-image" src={nitrogen}/>
@@ -599,7 +610,7 @@ function App() {
                         </DraggableItem>
                         
                         <DraggableItem id={3} top={50} data={10}>
-                          <img className="nutrient-image" src={potassium}/>
+                          <img className="nutrient-image" src={magnesium}/>
                         </DraggableItem>
                       </div>
                     </div>
