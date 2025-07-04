@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
 import { DndContext} from "@dnd-kit/core";
 import Draggable from 'react-draggable';
 import RainCanvas from './Components/RainCanvas';
@@ -64,11 +65,18 @@ function App() {
   const rainIntervalRef = useRef(null);
   const sunIntervalRef = useRef(null);
 
+  // useEffect(() => {
+  //   toast("Please provide a water, plant is too little, growth stalls!");
+  //   toast("Sunlight is recognition. Without it, your team wilts!");
+  // }, [])
+
   useEffect(() => {
     setOverallPoints(waterPoints+sunlightPoints+nutrientsPoints+deadLeafsPoints);
 
     //grow new leaves on the combination of the water and sunlight effects
     if((waterPoints+sunlightPoints) > 30) handleGrowPlant();
+
+    console.log('waterPoints, sunlightPoints, nutrientsPoints, deadLeafsPoints', waterPoints, sunlightPoints, nutrientsPoints, deadLeafsPoints)
   }, [waterPoints, sunlightPoints, nutrientsPoints, deadLeafsPoints])
 
   useEffect(() => {
@@ -101,10 +109,23 @@ function App() {
         } else
         if (waterLevel > 60) {
           setWaterPoints(15);
+          setSunlightPoints(0);
+          setDeadLeafsPoints(0);
+          setNutrientsPoints(0);
+          
           handleApplyDroopLeafsFunctionality();
           // setWaterEffectClass('droopy');
-        } else {
+        } 
+        else {
           setWaterEffectClass('');
+        }
+
+        if(waterLevel === 30) {
+          toast("Sunlight is recognition. Without it, your team wilts!");
+        }
+
+        if(waterLevel === 60) {
+          toast("Too much, and trust erodes!");
         }
       }
     }
@@ -121,7 +142,12 @@ function App() {
   
       if(sunlevel < 45 && sunlevel > 25) {
         setSunlightEffectClass('pale');
+
         setSunlightPoints(15);
+        setWaterPoints(0);
+        setDeadLeafsPoints(0);
+        setNutrientsPoints(0);
+
         handleApplyDeadLeafsFunctionality();
       }
       
@@ -130,6 +156,11 @@ function App() {
         // setSunlightPoints(15);
         setGame(false);
         handleResetAllPoints();
+      }
+
+      if(sunlevel === 10) toast("Please provide a water, plant is too little, growth stalls!");
+      if(sunlevel === 40) {
+        toast("Sometimes, you must remove what no longer serves growth!");
       }
     }
   }, [sunlightLevel])
@@ -425,6 +456,8 @@ function App() {
 
   return (
     <>
+      <ToastContainer />
+
       <div className="game-container">
         {/* <DragAndDrop /> */}
         <RainCanvas isRaining={isRaining} />
@@ -455,7 +488,8 @@ function App() {
                 </div> 
               */}
               <div style={{ marginTop: '30px' }}>
-                <HealthMeter points={overallPoints}/> 
+                <HealthMeter points={overallPoints}/>
+                <h1>{overallPoints}</h1>
               </div>
             </div>
 
