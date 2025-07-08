@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
+import Swal from 'sweetalert2';
 import { DndContext} from "@dnd-kit/core";
 import Draggable from 'react-draggable';
 import RainCanvas from './Components/RainCanvas';
@@ -71,12 +72,20 @@ function App() {
   // }, [])
 
   useEffect(() => {
+    Swal.fire({
+      title: "Welcome to the plant game!",
+      text: "You can control sunlight to help your plant grow, and rain to water it. Press and hold the sun icon to provide sunlight, and the rain icon to water your plant. Release to stop! Additionally, drag and drop nutrients into the plant's drop zone to help it grow stronger. Keep an eye on the progress bar to see your plant thrive!",
+      // icon: 'success',
+      confirmButtonText: 'Start',
+      allowOutsideClick: false
+    });
+  }, []);
+
+  useEffect(() => {
     setOverallPoints(waterPoints+sunlightPoints+nutrientsPoints+deadLeafsPoints);
 
     //grow new leaves on the combination of the water and sunlight effects
     if((waterPoints+sunlightPoints) > 30) handleGrowPlant();
-
-    console.log('waterPoints, sunlightPoints, nutrientsPoints, deadLeafsPoints', waterPoints, sunlightPoints, nutrientsPoints, deadLeafsPoints)
   }, [waterPoints, sunlightPoints, nutrientsPoints, deadLeafsPoints])
 
   useEffect(() => {
@@ -93,8 +102,6 @@ function App() {
   }, [plant]);
 
   useEffect(() => {
-    console.log('waterLevel', waterLevel);
-
     if(waterLevel > 0) {
       if (waterLevel === 100) handleStopRain();
 
@@ -102,12 +109,12 @@ function App() {
         if (waterLevel > 40 && waterLevel < 60) {
           setWaterPoints(25);
           // setWaterEffectClass('healthy');
-        } else
-        if (waterLevel < 40) {
+        } 
+        else if (waterLevel < 40) {
           setWaterPoints(15);
           // setWaterEffectClass('dull');
-        } else
-        if (waterLevel > 60) {
+        } 
+        else if (waterLevel > 60) {
           setWaterPoints(15);
           setSunlightPoints(0);
           setDeadLeafsPoints(0);
@@ -116,9 +123,7 @@ function App() {
           handleApplyDroopLeafsFunctionality();
           // setWaterEffectClass('droopy');
         } 
-        else {
-          setWaterEffectClass('');
-        }
+        else setWaterEffectClass('');
 
         if(waterLevel === 30) {
           toast("Sunlight is recognition. Without it, your team wilts!");
@@ -129,7 +134,6 @@ function App() {
         }
       }
     }
-    
   }, [waterLevel]);
 
   useEffect(() => {
@@ -326,7 +330,7 @@ function App() {
       const addTheDeadLeafsInThePlant = plant.map((item, key) => {
         let obj = {};
     
-        if (Math.random() < 0.3 && (!item?.remove && !item?.dead && !item?.droop)) obj = { dead: true };
+        if (Math.random() < 0.1 && (!item?.remove && !item?.dead && !item?.droop)) obj = { dead: true };
         return { ...item, ...obj };
       });
     
@@ -393,6 +397,11 @@ function App() {
     setSunlightLevel(100);
   }
 
+  const findDeadOrDroopLeaves = () => {
+    const findDeadOrDroopLeaves = plant.find(x => (x.dead === true || x.droop === true));
+    return findDeadOrDroopLeaves;
+  }
+
   // const handleGrowPlant = () => {
   //   if(plant?.length <= 11) setPlant([...plant, {
   //     // style: {height: 0, width: 0}
@@ -456,7 +465,7 @@ function App() {
 
   return (
     <>
-      <ToastContainer />
+      <ToastContainer position="bottom-left" />
 
       <div className="game-container">
         {/* <DragAndDrop /> */}
@@ -567,19 +576,18 @@ function App() {
                                 }}
                               >
                                 {
-                                  item?.dead &&
-                                    <div className="dead-lead-popup" 
-                                      style={{
-                                        ...(key % 2 === 1 && { right: '100%' }),
-                                        ...(key % 2 !== 1 && { left: '100%' }),
-                                      }}
-                                    >
-                                      {
-                                        (sunlightEffectClass !== 'burnt') && <label>Sometimes, you must remove what no longer serves growth.</label>
-                                      }
-                                    </div>
+                                  (item?.dead && sunlightEffectClass !== 'burnt') &&
+                                    <>
+                                      <div className="dead-lead-popup" 
+                                        style={{
+                                          ...(key % 2 === 1 && { right: '100%' }),
+                                          ...(key % 2 !== 1 && { left: '100%' }),
+                                        }}
+                                      >
+                                        <label>Sometimes, you must remove what no longer serves growth.</label> 
+                                      </div>
+                                    </>
                                 }
-                                {/* <div className="line"></div> */}
                               </div>
                           }
                         </>
@@ -642,20 +650,23 @@ function App() {
                           <div className="vertical-progress-bar-inner" style={{
                             height: `${nutrientVerticalProgress}%`
                           }}></div>
+                          {/* <h2 className="vertical-progress-bar-content">Please drag the nutrients!</h2> */}
                         </div>
                       </div>
                       <div>
-                        <DraggableItem id={1} top={0} data={10}>
-                          <img className="nutrient-image" src={nitrogen}/>
-                        </DraggableItem>
-                        
-                        <DraggableItem id={2} top={25} data={10}>
-                          <img className="nutrient-image" src={phosphorus}/>
-                        </DraggableItem>
-                        
-                        <DraggableItem id={3} top={50} data={10}>
-                          <img className="nutrient-image" src={magnesium}/>
-                        </DraggableItem>
+                        <div>
+                          <DraggableItem id={1} top={0} data={10}>
+                            <img className="nutrient-image" src={nitrogen}/>
+                          </DraggableItem>
+                          
+                          <DraggableItem id={2} top={25} data={10}>
+                            <img className="nutrient-image" src={phosphorus}/>
+                          </DraggableItem>
+                          
+                          <DraggableItem id={3} top={50} data={10}>
+                            <img className="nutrient-image" src={magnesium}/>
+                          </DraggableItem>
+                        </div>
                       </div>
                     </div>
                   {/* </div> */}

@@ -13,16 +13,20 @@
 }
 .nutrients-panel {
     display: flex;
+    justify-content: center;
 }
 .vertical-progress-bar {
     position: absolute;
     left: -15%;
+    
 }
 .vertical-progress-bar-outer {
     position: relative;
     width: 15px;
     height: 380px;
     background-color: rgb(207, 207, 207);
+    display: flex;
+    text-align: right;
 }
 .vertical-progress-bar-inner {
     position: absolute;
@@ -32,6 +36,12 @@
     width: 100%;
     background-color: #008000;
     transition: all 0.3s ease;
+}
+.vertical-progress-bar-content {
+    width: 100%;
+    height: 100%;
+    writing-mode: vertical-lr;
+    letter-spacing: 3px;
 }
 
 /* .blast {
