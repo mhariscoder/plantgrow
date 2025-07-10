@@ -34,3 +34,10 @@
 }
 
 
+/*Game modal*/
+.swal2-title {
+  padding: 15px;
+  background-color: forestgreen;
+  color: white;
+  font-weight: lighter;
+}

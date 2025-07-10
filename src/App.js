@@ -116,9 +116,9 @@ function App() {
         } 
         else if (waterLevel > 60) {
           setWaterPoints(15);
-          setSunlightPoints(0);
-          setDeadLeafsPoints(0);
-          setNutrientsPoints(0);
+          // setSunlightPoints(0);
+          // setDeadLeafsPoints(0);
+          // setNutrientsPoints(0);
           
           handleApplyDroopLeafsFunctionality();
           // setWaterEffectClass('droopy');
@@ -309,7 +309,7 @@ function App() {
               }
             }
           ));
-        }, 100);
+        }, 500);
   
         setSunEffectClass('sunlight');
       }
