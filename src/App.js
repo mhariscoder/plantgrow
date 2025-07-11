@@ -71,15 +71,45 @@ function App() {
   //   toast("Sunlight is recognition. Without it, your team wilts!");
   // }, [])
 
-  useEffect(() => {
+  const gameStartModal = () => {
     Swal.fire({
       title: "Welcome to the plant game!",
       text: "You can control sunlight to help your plant grow, and rain to water it. Press and hold the sun icon to provide sunlight, and the rain icon to water your plant. Release to stop! Additionally, drag and drop nutrients into the plant's drop zone to help it grow stronger. Keep an eye on the progress bar to see your plant thrive!",
-      // icon: 'success',
-      confirmButtonText: 'Start',
-      allowOutsideClick: false
+      width: '50vw',
+      confirmButtonText: 'READY TO START',
+      allowOutsideClick: false,
+      confirmButtonColor: 'forestgreen',
+      customClass: {
+        container: 'custom-container-class', // Apply class to the outer container
+        popup: 'custom-popup-class',         // Apply class to the popup (modal) itself
+        title: 'custom-title-class',         // Apply class to the title
+        content: 'custom-content-class',     // Apply class to the content text
+        confirmButton: 'custom-confirm-btn'  // Apply class to the confirm button
+      }
     });
+  }
+
+  const gameOverModal = () => {
+    Swal.fire({
+      title: "GAME OVER!",
+      text: "Better luck next time! Do you want to try again and beat your score?",
+      icon: 'warning',
+      width: '50vw',
+      confirmButtonText: 'TRY AGAIN',
+      allowOutsideClick: false,
+      confirmButtonColor: 'forestgreen',
+    }).then((result) => {
+        if (result.isConfirmed) window.location.reload();
+    });
+  }
+
+  useEffect(() => {
+    gameStartModal();
   }, []);
+
+  useEffect(() => {
+    console.log("waterLevel, sunlightLevel", waterLevel, sunlightLevel);
+  }, [waterLevel, sunlightLevel]);
 
   useEffect(() => {
     setOverallPoints(waterPoints+sunlightPoints+nutrientsPoints+deadLeafsPoints);
@@ -107,28 +137,32 @@ function App() {
 
       if(!pause) {
         if (waterLevel > 40 && waterLevel < 60) {
-          setWaterPoints(25);
           // setWaterEffectClass('healthy');
-        } 
+          setWaterPoints(25);
+        }
+
         else if (waterLevel < 40) {
-          setWaterPoints(15);
           // setWaterEffectClass('dull');
-        } 
-        else if (waterLevel > 60) {
           setWaterPoints(15);
+        }
+
+        else if (waterLevel > 60) {
           // setSunlightPoints(0);
           // setDeadLeafsPoints(0);
           // setNutrientsPoints(0);
-          
-          handleApplyDroopLeafsFunctionality();
           // setWaterEffectClass('droopy');
-        } 
-        else setWaterEffectClass('');
+
+          setWaterPoints(15);
+          handleApplyDroopLeafsFunctionality();
+        }
+
+        else {
+          setWaterEffectClass('');
+        }
 
         if(waterLevel === 30) {
           toast("Sunlight is recognition. Without it, your team wilts!");
         }
-
         if(waterLevel === 60) {
           toast("Too much, and trust erodes!");
         }
@@ -138,6 +172,7 @@ function App() {
 
   useEffect(() => {
     const sunlevel = (100 - sunlightLevel);
+
     if(!pause) {
       if(sunlevel < 25 && sunlevel > 15) {
         // setSunlightEffectClass('vibrant');
@@ -146,23 +181,27 @@ function App() {
   
       if(sunlevel < 45 && sunlevel > 25) {
         setSunlightEffectClass('pale');
-
         setSunlightPoints(15);
         setWaterPoints(0);
         setDeadLeafsPoints(0);
         setNutrientsPoints(0);
-
         handleApplyDeadLeafsFunctionality();
       }
       
       if(sunlevel > 55) {
-        setSunlightEffectClass('burnt');
         // setSunlightPoints(15);
+        
         setGame(false);
+        setSunlightEffectClass('burnt');
         handleResetAllPoints();
       }
 
-      if(sunlevel === 10) toast("Please provide a water, plant is too little, growth stalls!");
+      if(sunlevel === 10) {
+        if (waterLevel < 40) {
+          toast("Please provide a water, plant is too little, growth stalls!");
+        }
+      }
+
       if(sunlevel === 40) {
         toast("Sometimes, you must remove what no longer serves growth!");
       }
@@ -192,7 +231,9 @@ function App() {
         handleGrowPlant();
         handleGrowNewLeavesOnRemovableLocation();
       }
-      else if(nutrientCountProgress < 3 && nutrientCountProgress !== 0){
+      else if(
+        nutrientCountProgress < 3 && nutrientCountProgress !== 0
+      ){
         setNutrientsPoints(15);
       }
     }
@@ -345,7 +386,13 @@ function App() {
         const addTheDroopLeafsInThePlant = plant.map((item, key) => {
           let obj = {};
       
-          if (Math.random() < 0.3 && (!item?.remove && !item?.dead && !item?.droop)) obj = { droop: true };
+          if (Math.random() < 0.3 && (
+            !item?.remove  
+            && !item?.dead  
+            && !item?.droop
+          )) {
+            obj = { droop: true };
+          }
           return { ...item, ...obj };
         });
       
@@ -626,13 +673,15 @@ function App() {
                 <div className="nutrients-container">
                   {/* <h2 className="nutrients-title">Nutrients</h2> */}
                   {/* <div> */}
+                  
                     <button
                       onMouseDown={() => handleStartSunlight()} 
                       onMouseUp={() => handleStopSunlight()}
                       title="Sun" 
                       className="sunicon"
+                      onDragStart={(e) => e.preventDefault()}
                     >
-                      <img src={sunicon} alt="Sun" className="sunicon-image" />
+                      <img draggable="false" src={sunicon} alt="Sun" className="sunicon-image" />
                     </button>
 
                     <button
@@ -640,8 +689,9 @@ function App() {
                       onMouseUp={() => handleStopRain()}
                       title="Rain" 
                       className="rain"
+                      onDragStart={(e) => e.preventDefault()}
                     >
-                      <img src={rain} alt="Rain" className="rain-image" />
+                      <img draggable="false" src={rain} alt="Rain" className="rain-image" />
                     </button>
                     
                     <div className="nutrients-panel">
@@ -655,17 +705,26 @@ function App() {
                       </div>
                       <div>
                         <div>
-                          <DraggableItem id={1} top={0} data={10}>
-                            <img className="nutrient-image" src={nitrogen}/>
-                          </DraggableItem>
+                          <div className="nutrient-box">
+                            <DraggableItem id={1} top={0} data={10}>
+                              <img className="nutrient-image" src={nitrogen}/>
+                            </DraggableItem>
+                            <h4 className="nutrient-heading">Empathy</h4>
+                          </div>
                           
-                          <DraggableItem id={2} top={25} data={10}>
-                            <img className="nutrient-image" src={phosphorus}/>
-                          </DraggableItem>
+                          <div className="nutrient-box">
+                            <DraggableItem id={2} top={0} data={10}>
+                              <img className="nutrient-image" src={phosphorus}/>
+                            </DraggableItem>
+                            <h4 className="nutrient-heading">Trust</h4>
+                          </div>
                           
-                          <DraggableItem id={3} top={50} data={10}>
-                            <img className="nutrient-image" src={magnesium}/>
-                          </DraggableItem>
+                          <div className="nutrient-box">
+                            <DraggableItem id={3} top={0} data={10}>
+                              <img className="nutrient-image" src={magnesium}/>
+                            </DraggableItem>
+                            <h4 className="nutrient-heading">Psychological Safety</h4>
+                          </div>
                         </div>
                       </div>
                     </div>
