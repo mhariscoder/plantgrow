@@ -6,15 +6,15 @@
 } */
 .raincanvas {
 	position: absolute;
-	width: 100%;
+	width: 100%!important;
 	/* height: 100%; */
     z-index: 1;
 }
-body {
-    background: -moz-linear-gradient(top,  rgba(8,13,40,1) 0%, rgba(38,19,0,1) 100%); /* FF3.6-15 */
-    background: -webkit-linear-gradient(top,  rgba(8,13,40,1) 0%,rgba(38,19,0,1) 100%); /* Chrome10-25,Safari5.1-6 */
-    background: linear-gradient(to bottom,  rgba(8,13,40,1) 0%,rgba(38,19,0,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-}
+/* body {
+    background: -moz-linear-gradient(top,  rgba(8,13,40,1) 0%, rgba(38,19,0,1) 100%);
+    background: -webkit-linear-gradient(top,  rgba(8,13,40,1) 0%,rgba(38,19,0,1) 100%);
+    background: linear-gradient(to bottom,  rgba(8,13,40,1) 0%,rgba(38,19,0,1) 100%);
+} */
 
 #instructions {
 	opacity: 1;

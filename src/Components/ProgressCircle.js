@@ -48,7 +48,7 @@ const ProgressCircle = ({
                     </div>
                 </div>
 
-                <h2 className="progress-title">{title}</h2>
+                {/* <h2 className="progress-title">{title}</h2> */}
             </div>
             {/* <span>
                 Enter Percentage: 

@@ -3,11 +3,28 @@
 	font-family: Arial, sans-serif;
 	height: 100vh;
 	display: flex;
-	background-image: url('./../public/assets/background.png');
+	/* background-image: url('./../public/assets/background.png'); */
 	background-repeat: no-repeat;
 	background-size: cover;
 	background-position: bottom left;
 	overflow: hidden;
+	position: relative;
+}
+
+.video-layer {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	background-color: #7171713b;
+	z-index: 1;
+}
+
+.game-container video {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	filter: brightness(0.8) contrast(1.2);
 }
 
 .result-panel {
@@ -21,6 +38,7 @@
     flex-direction: column;
     /* justify-content: flex-end; */
     overflow: hidden;
+	align-items: center;
 }
 
 .visual-panel {
