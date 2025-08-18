@@ -28,6 +28,7 @@ import BirthdayConfetti from './BirthdayConfetti';
 import HealthMeter from './Components/HealthMeter';
 
 import Video from './Assets/video-background-2.mp4';
+import PlantAnimation from './Components/PlantAnimation';
 
 function App() {
   const sunRef = useRef(null);
@@ -108,6 +109,15 @@ function App() {
   useEffect(() => {
     gameStartModal();
     sfwdGetPlantActivityStatistic();
+
+    // setWaterLevel(39);
+    // setWaterPoints(15);
+    // setSunlightLevel(10);
+    // setSunlightPoints(15);
+    // setNutrientLevel(0);
+    // setNutrientsPoints(25);
+    // setDeadLeavesLevel(25);
+    // setDeadLeavesPoints(0);
   }, []);
 
   useEffect(() => {
@@ -254,12 +264,22 @@ function App() {
         handleGrowPlant();
         handleGrowNewLeavesOnRemovableLocation();
         setOverallPoints(parseInt(waterPoints)+parseInt(sunlightPoints)+25+parseInt(deadLeavesPoints));
+        sfwdSavePlantActivityStatistic({
+          nutrient_progress: nutrientCountProgress,
+          nutrient_points: 25,
+          total: waterPoints+sunlightPoints+25+deadLeavesPoints
+        });
       }
       else if(
         nutrientCountProgress < 3 && nutrientCountProgress !== 0
       ){
         setNutrientsPoints(15);
         setOverallPoints(parseInt(waterPoints)+parseInt(sunlightPoints)+15+parseInt(deadLeavesPoints));
+        sfwdSavePlantActivityStatistic({
+          nutrient_progress: nutrientCountProgress,
+          nutrient_points: 15,
+          total: waterPoints+sunlightPoints+15+deadLeavesPoints
+        });
       }
     }
   }, [nutrientCountProgress]);
@@ -344,8 +364,9 @@ function App() {
         nutrient_points: nutrientsPoints,
         dead_leaves_progress: deadLeavesLevel,
         dead_leaves_points: deadLeavesPoints,
-        total_progress: overallPoints,
-        total_points: overallPoints
+        // total_progress: overallPoints,
+        // total_points: overallPoints
+        total: overallPoints
       });
     }
   }
@@ -369,13 +390,6 @@ function App() {
         setIsDropped(true);
         setNutrientCountProgress(nutrientCountProgress+1);
         setNutrientLevel(nutrientLevel+33.33);
-
-        // sfwdSavePlantActivityStatistic({
-        //   nutrient_progress: nutrientLevel+33.33,
-        //   nutrientsPoints: nutrientPoints,
-        //   total_progress: waterLevel+sunlightLevel+nutrientLevel+25,
-        //   total_points: waterPoints+sunlightPoints+nutrientsPoints+25
-        // });
       }
     }
   };
@@ -430,8 +444,9 @@ function App() {
         nutrient_points: nutrientsPoints,
         dead_leaves_progress: deadLeavesLevel,
         dead_leaves_points: deadLeavesPoints,
-        total_progress: overallPoints,
-        total_points: overallPoints
+        // total_progress: overallPoints,
+        // total_points: overallPoints
+        total: overallPoints
       });
     }
   }
@@ -488,24 +503,20 @@ function App() {
       setPlant(_plant);
 
       const findDeadLeavesOnPlant = plant.find(x => x.dead === true);
+
       if(!findDeadLeavesOnPlant) {
         setOverallPoints(parseInt(waterPoints)+parseInt(sunlightPoints)+parseInt(nutrientsPoints)+25);
-
         sfwdSavePlantActivityStatistic({
           dead_leaves_progress: 25,
           dead_leaves_points: 25,
-          total_progress: waterLevel+sunlightLevel+nutrientLevel+25,
-          total_points: waterPoints+sunlightPoints+nutrientsPoints+25
+          total: waterPoints+sunlightPoints+nutrientsPoints+25
         });
-      }
-      else {
+      } else {
         setOverallPoints(parseInt(waterPoints)+parseInt(sunlightPoints)+parseInt(nutrientsPoints)+0);
-
         sfwdSavePlantActivityStatistic({
           dead_leaves_progress: 0,
           dead_leaves_points: 0,
-          total_progress: waterLevel+sunlightLevel+nutrientLevel+0,
-          total_points: waterPoints+sunlightPoints+nutrientsPoints+0
+          total: waterPoints+sunlightPoints+nutrientsPoints+0
         });
       }
     }
@@ -615,7 +626,8 @@ function App() {
       'sun_progress', 'sun_points',
       'nutrient_progress', 'nutrient_points',
       'dead_leaves_progress', 'dead_leaves_points',
-      'total_progress', 'total_points'
+      // 'total_progress', 'total_points'
+      'total'
     ];
 
     for (const key in data) {
@@ -669,6 +681,8 @@ function App() {
       setNutrientsPoints(parseInt(data?.nutrient_points));
       setDeadLeavesLevel(parseInt(data?.dead_leaves_progress));
       setDeadLeavesPoints(parseInt(data?.dead_leaves_points));
+
+      // this should be modifiy
       setOverallPoints(parseInt(data?.water_points)+parseInt(data?.sun_points)+parseInt(data?.nutrient_points)+parseInt(data?.dead_leaves_points));
       
     } catch (error) {
@@ -676,20 +690,18 @@ function App() {
     }
   };
 
-
   return (
     <>
-    {
-      /*
-      
-      
-      <button onClick={() => savePlantActivity()}>Save Activity</button>
-      <button onClick={() => completePlantActivity()}>Complete Activity</button>
+      {
+        /*
+          <button onClick={() => savePlantActivity()}>Save Activity</button>
+          <button onClick={() => completePlantActivity()}>Complete Activity</button>
+        */
+      }
 
-      */
-    }
-      <ToastContainer position="bottom-left" />
-        
+      <PlantAnimation />
+
+      <ToastContainer position="bottom-left" />  
         <div className="game-container">
           
           <div className="video-layer"></div>

@@ -11,6 +11,8 @@
     "@testing-library/user-event": "^13.5.0",
     "fabric": "^6.6.4",
     "fabricjs-react": "^2.1.0",
+    "lottie-react": "^2.4.1",
+    "lottie-web": "^5.13.0",
     "react": "^19.1.0",
     "react-circular-progressbar": "^2.2.0",
     "react-dnd": "^16.0.1",
