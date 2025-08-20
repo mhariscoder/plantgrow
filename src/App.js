@@ -27,13 +27,13 @@ import DraggableItem from './DraggableItem';
 import BirthdayConfetti from './BirthdayConfetti';
 import HealthMeter from './Components/HealthMeter';
 
-import Video from './Assets/video-background-2.mp4';
+import Video from './Assets/video-background-3.mp4';
 import PlantAnimation from './Components/PlantAnimation';
 
 function App() {
+  const plantRef = useRef();
   const sunRef = useRef(null);
   const sunContainerRef = useRef(null);
-  const firstRender = React.useRef(true);
 
   const [stemHeight, setStemHeight] = useState(0);
   const [plant, setPlant] = useState([{},{},{},{},{},{},{}]);
@@ -89,8 +89,12 @@ function App() {
         content: 'custom-content-class',
         confirmButton: 'custom-confirm-btn'
       }
+    }).then((result) => {
+      if (result.isConfirmed) {
+        if (plantRef.current) plantRef.current.growPlant();
+      }
     });
-  }
+  };
 
   const gameOverModal = () => {
     Swal.fire({
@@ -302,7 +306,7 @@ function App() {
   };
 
   const handleGrowPlant = () => {
-    console.log(game, !pause)
+    
     if(game && !pause) {
       if (plant?.length <= 11) {
         setPlant((prevPlant) => {
@@ -699,93 +703,89 @@ function App() {
         */
       }
 
-      <PlantAnimation />
-
       <ToastContainer position="bottom-left" />  
-        <div className="game-container">
-          
-          <div className="video-layer"></div>
-          <video
-            autoPlay
-            muted
-            loop
-            src={Video}
-            type="video/mp4"
-          />
+      
+      <div className="game-container">
+        
+        <div className="video-layer"></div>
+        <video
+          autoPlay
+          muted
+          loop
+          src={Video}
+          type="video/mp4"
+        />
 
-          {/* <DragAndDrop /> */}
-          <RainCanvas isRaining={isRaining} />
 
-          <DndContext onDragEnd={handleDrop}>
-            <div style={{
-              display: 'flex',
-              flex: 1
-            }}>
-              {/* <div className={`plant ${plantHealth}`} /> */}
+        <RainCanvas isRaining={isRaining} />
 
-              <div className="result-panel">
-                <div style={{ marginTop: '30px' }}>
-                  <HealthMeter points={overallPoints}/>
-                  <h1 style={{color: '#fff'}}>{overallPoints}</h1>
-                </div>
+        <DndContext onDragEnd={handleDrop}>
+          <div style={{
+            display: 'flex',
+            flex: 1
+          }}>
 
-                <div className="progress-container">
-                    <div style={{ marginBottom: '30px' }}>
-                      <ProgressCircle level={waterLevel} defaultColor={`blue`} title={`Water`} />
-                    </div>
-                    <div style={{ marginBottom: '30px' }}>
-                      <SunlightProgress level={sunlightLevel}/>
-                    </div>
-                    {/* <div style={{ marginBottom: '30px' }}>
-                      <NutritionProgress 
-                        title={`Nutritions`} 
-                        // percentage={nutrientCount} 
-                        percentage={nutrientLevel}
-                      />
-                    </div> */}
-                  </div> 
+
+            <div className="result-panel">
+              <div style={{ marginTop: '30px' }}>
+                <HealthMeter points={overallPoints}/>
+                <h1 style={{color: '#fff'}}>{overallPoints}</h1>
               </div>
 
-              <div className="visual-panel">
-                <div 
-                  ref={sunContainerRef} 
-                  className="sun-container"
-                >
-                  <Draggable 
-                    axis="y"
-                    nodeRef={sunRef}
-                    bounds={bounds}
-                    defaultPosition={{ x: -500, y: 50}} 
-                    // onDrag={handleSunDrag}
-                  >
-                    {/* <div className="sun" ref={sunRef}>☀️</div> */}
-                    <div 
-                      className={`${sunEffectClass} sun theSun`} 
-                      ref={sunRef} 
-                      style={{transform: "translate(0px, 100px)"}}
-                    >
-                      <div className="ray_box">
-                        <div className="ray ray1"></div>
-                        <div className="ray ray2"></div>
-                        <div className="ray ray3"></div>
-                        <div className="ray ray4"></div>
-                        <div className="ray ray5"></div>
-                        <div className="ray ray6"></div>
-                        <div className="ray ray7"></div>
-                        <div className="ray ray8"></div>
-                        <div className="ray ray9"></div>
-                        <div className="ray ray10"></div>
-                      </div>
-                    </div>
-                  </Draggable>
-                </div>
+              <div className="progress-container">
+                  <div style={{ marginBottom: '30px' }}>
+                    <ProgressCircle level={waterLevel} defaultColor={`blue`} title={`Water`} />
+                  </div>
+                  <div style={{ marginBottom: '30px' }}>
+                    <SunlightProgress level={sunlightLevel}/>
+                  </div>
+ 
+                </div> 
+            </div>
 
-                <div className="plant">
-                  {
-                    isDropped && 
-                      <BirthdayConfetti height={`500px`} width={`500px`} />
-                  }
-                  <DropZone onDrop={handleDrop}>
+            <div className="visual-panel">
+              <div 
+                ref={sunContainerRef} 
+                className="sun-container"
+              >
+                <Draggable 
+                  axis="y"
+                  nodeRef={sunRef}
+                  bounds={bounds}
+                  defaultPosition={{ x: -50, y: 50}} 
+                  // onDrag={handleSunDrag}
+                >
+         
+                  <div 
+                    className={`${sunEffectClass} sun theSun`} 
+                    ref={sunRef} 
+                    style={{transform: "translate(0px, 100px)"}}
+                  >
+                    <div className="ray_box">
+                      <div className="ray ray1"></div>
+                      <div className="ray ray2"></div>
+                      <div className="ray ray3"></div>
+                      <div className="ray ray4"></div>
+                      <div className="ray ray5"></div>
+                      <div className="ray ray6"></div>
+                      <div className="ray ray7"></div>
+                      <div className="ray ray8"></div>
+                      <div className="ray ray9"></div>
+                      <div className="ray ray10"></div>
+                    </div>
+                  </div>
+                </Draggable>
+              </div>
+
+              <div className="plant">
+                {
+                  isDropped && 
+                    <BirthdayConfetti height={`500px`} width={`500px`} />
+                }
+                <DropZone onDrop={handleDrop}>
+                  <PlantAnimation ref={plantRef} />
+
+                  {/* <div>
                     <div className={`stem ${plantHealth} ${waterEffectClass} ${sunlightEffectClass}`} style={{
                       height: stemHeight,
                     }}>
@@ -838,130 +838,82 @@ function App() {
                         ))
                       }
 
-                      {/* <div class={`${plantHealth} leaf leaf01`}>
-                          <div className="line"></div>
-                      </div>
-                      <div class={`${plantHealth} leaf leaf02`}>
-                          <div className="line"></div>
-                      </div>
-                      <div class={`${plantHealth} leaf leaf03`}>
-                          <div className="line"></div>
-                      </div>
-                      <div class={`${plantHealth} leaf leaf04`}>
-                          <div className="line"></div>
-                      </div>
-                      <div class={`${plantHealth} leaf leaf05`}>
-                          <div className="line"></div>
-                      </div>
-                      <div class={`${plantHealth} leaf leaf06`}>
-                          <div className="line"></div>
-                      </div> */}
                     </div>
                     <div className="pot"></div>
-                    <div className="pot-top"></div>  
-                  </DropZone>
-                </div>
+                    <div className="pot-top"></div>
+                  </div>   */}
+                </DropZone>
               </div>
-            
-              <div className="operational-panel">
-                <div className="operational-panel-control">
-                  {/* <button onClick={() => handleGrowPlant()}>Grow Plant</button> */}
+            </div>
+          
+            <div className="operational-panel">
+              <div className="operational-panel-control">
+ 
 
-                  <div className="nutrients-container">
-                    {/* <h2 className="nutrients-title">Nutrients</h2> */}
-                    {/* <div> */}
+                <div className="nutrients-container">
+
+                  
+                    <button
+                      onMouseDown={() => handleStartSunlight()} 
+                      onMouseUp={() => handleStopSunlight()}
+                      title="Sun" 
+                      className="sunicon"
+                      onDragStart={(e) => e.preventDefault()}
+                    >
+                      <img draggable="false" src={sunicon} alt="Sun" className="sunicon-image" />
+                    </button>
+
+                    <button
+                      onMouseDown={() => handleStartRain()} 
+                      onMouseUp={() => handleStopRain()}
+                      title="Rain" 
+                      className="rain"
+                      onDragStart={(e) => e.preventDefault()}
+                    >
+                      <img draggable="false" src={rain} alt="Rain" className="rain-image" />
+                    </button>
                     
-                      <button
-                        onMouseDown={() => handleStartSunlight()} 
-                        onMouseUp={() => handleStopSunlight()}
-                        title="Sun" 
-                        className="sunicon"
-                        onDragStart={(e) => e.preventDefault()}
-                      >
-                        <img draggable="false" src={sunicon} alt="Sun" className="sunicon-image" />
-                      </button>
-
-                      <button
-                        onMouseDown={() => handleStartRain()} 
-                        onMouseUp={() => handleStopRain()}
-                        title="Rain" 
-                        className="rain"
-                        onDragStart={(e) => e.preventDefault()}
-                      >
-                        <img draggable="false" src={rain} alt="Rain" className="rain-image" />
-                      </button>
-                      
-                      <div className="nutrients-panel">
-                        <div className="vertical-progress-bar">
-                          <div className="vertical-progress-bar-outer">
-                            <div className="vertical-progress-bar-inner" style={{
-                              height: `${nutrientLevel}%`
-                            }}></div>
-                            {/* <h2 className="vertical-progress-bar-content">Please drag the nutrients!</h2> */}
-                          </div>
+                    <div className="nutrients-panel">
+                      <div className="vertical-progress-bar">
+                        <div className="vertical-progress-bar-outer">
+                          <div className="vertical-progress-bar-inner" style={{
+                            height: `${nutrientLevel}%`
+                          }}></div>
+                         
                         </div>
+                      </div>
+                      <div>
                         <div>
-                          <div>
-                            <div className="nutrient-box">
-                              <DraggableItem id={1} top={0} data={10}>
-                                <img className="nutrient-image" src={nitrogen}/>
-                              </DraggableItem>
-                              <h4 className="nutrient-heading">Empathy</h4>
-                            </div>
-                            
-                            <div className="nutrient-box">
-                              <DraggableItem id={2} top={0} data={10}>
-                                <img className="nutrient-image" src={phosphorus}/>
-                              </DraggableItem>
-                              <h4 className="nutrient-heading">Trust</h4>
-                            </div>
-                            
-                            <div className="nutrient-box">
-                              <DraggableItem id={3} top={0} data={10}>
-                                <img className="nutrient-image" src={magnesium}/>
-                              </DraggableItem>
-                              <h4 className="nutrient-heading">Psychological Safety</h4>
-                            </div>
+                          <div className="nutrient-box">
+                            <DraggableItem id={1} top={0} data={10}>
+                              <img className="nutrient-image" src={nitrogen}/>
+                            </DraggableItem>
+                            <h4 className="nutrient-heading">Empathy</h4>
+                          </div>
+                          
+                          <div className="nutrient-box">
+                            <DraggableItem id={2} top={0} data={10}>
+                              <img className="nutrient-image" src={phosphorus}/>
+                            </DraggableItem>
+                            <h4 className="nutrient-heading">Trust</h4>
+                          </div>
+                          
+                          <div className="nutrient-box">
+                            <DraggableItem id={3} top={0} data={10}>
+                              <img className="nutrient-image" src={magnesium}/>
+                            </DraggableItem>
+                            <h4 className="nutrient-heading">Psychological Safety</h4>
                           </div>
                         </div>
                       </div>
-                    {/* </div> */}
-                  </div>
+                    </div>
+
                 </div>
               </div>
-
-              {/*
-                <button onClick={handleWaterPlant}>💧 Water the Plant</button>
-                <p>Water: {Math.round(waterLevel)}% | Sunlight: {Math.round(sunlightLevel)}%</p>
-
-                <Draggable nodeRef={sunRef} axis="y" bounds={{ top: -50, bottom: 50 }} onDrag={handleSunDrag}>
-                  <div ref={sunRef}>
-                    <div className="sun">☀️</div>
-                  </div>
-                </Draggable>
-                
-                {Array.from({ length: deadLeaves }, (_, i) => (
-                  <div key={i} className="dead-leaf" onClick={pruneLeafs}>
-                    🍂
-                  </div>
-                ))}
-
-                <div className="nutrients">
-                  <button onClick={() => addNutrient('Empathy')}><FaRegHeart /> Empathy</button>
-                  <button onClick={() => addNutrient('Psychological Safety')}><FaBrain /> Safety</button>
-                  <button onClick={() => addNutrient('Trust')}><FaHandshake /> Trust</button>
-                  <button onClick={() => addNutrient('Support')}><FaPeopleCarry /> Support</button>
-                </div>
-
-                {showPopup && (
-                  <div className="popup">
-                    Watering & Sunlight = Feedback & Guidance. {popupMessage}
-                  </div>
-                )}
-              */}
             </div>
-          </DndContext>
-        </div>
+          </div>
+        </DndContext>
+      </div>
       
       
     </>
