@@ -13,19 +13,32 @@ const PlantAnimation = forwardRef((props, ref) => {
 
   const [leaves, setLeaves] = useState([]);
   const [flowers, setFlowers] = useState([]);
-  
-  const { 
-    View: StemView, 
-    // play, 
-    // pause, 
-    // stop, 
-    // setSpeed,
-    playSegments 
+
+  const [frames, setFrames] = useState([]);
+  const [currentFrame, setCurrentFrame] = useState(0);
+
+  const segments = [100, 110, 120, 130, 140];
+
+  const roundToNearestTen = (num) => {
+    return Math.round(num / 10) * 10;
+  };
+
+  const {
+    View: StemView,
+    playSegments,
+    animation,
+    setDirection,
+    setSpeed,
+    play,
+    pause
   } = useLottie({
     animationData: stemJson,
     loop: false,
-    autoplay: false,          
-    lottieRef: stemRef     
+    autoplay: false,
+    lottieRef: stemRef,
+    onEnterFrame: (e) => {
+      setCurrentFrame(e.currentTime);
+    }
   });
 
   useImperativeHandle(ref, () => ({
@@ -37,19 +50,19 @@ const PlantAnimation = forwardRef((props, ref) => {
   }));
 
   const growPlant = () => {
-    playSegments([0, 140], true);
+    playSegments([0, 100], true);
 
-    setTimeout(() => {
-      leafTemplates.forEach((_, i) => {
-        setTimeout(() => addLeaf(i), i * 300);
-      });
-    }, 4000);
+    // setTimeout(() => {
+    //   leafTemplates.forEach((_, i) => {
+    //     setTimeout(() => addLeaf(i), i * 300);
+    //   });
+    // }, 4000);
 
-    setTimeout(() => {
-      flowerTemplates.forEach((_, i) => {
-        setTimeout(() => addFlower(i), i * 300);
-      });
-    }, 5000);
+    // setTimeout(() => {
+    //   flowerTemplates.forEach((_, i) => {
+    //     setTimeout(() => addFlower(i), i * 300);
+    //   });
+    // }, 5000);
   };
 
   const addLeaf = (idx) => {
@@ -88,6 +101,84 @@ const PlantAnimation = forwardRef((props, ref) => {
     }
   };
 
+  useEffect(() => {
+    let lastFrame = frames[frames.length - 1];
+    if(lastFrame === undefined) lastFrame = 0;
+
+    const orignalFrame = roundToNearestTen(currentFrame + lastFrame);
+
+    if(segments?.length > 0 ) {
+      segments.forEach((segment, index) => {
+        if(index === 0) {
+          if (orignalFrame === segment) {
+            setFrames((prevFrames) => {
+              if (!prevFrames.includes(roundToNearestTen(currentFrame)) && roundToNearestTen(currentFrame) > 0) {
+                return [...prevFrames, roundToNearestTen(currentFrame)];
+              }
+              
+              return prevFrames;
+            });
+          }
+        } else {
+          if ( orignalFrame === segment ) {
+            setFrames((prevFrames) => {
+              if (!prevFrames.includes(Math.round(orignalFrame)) && Math.round(orignalFrame) > 0) {
+                return [...prevFrames, Math.round(orignalFrame)];
+              }
+
+              return prevFrames;
+            });
+          }
+        }
+      });
+    }
+  }, [currentFrame]);
+
+  useEffect(() => {
+    let lastFrame = frames[frames.length - 1];
+    if(lastFrame === undefined) lastFrame = 0;
+
+    if(segments?.length > 0 ) {
+      segments.forEach((segment, index) => {
+        if(index === 0) {
+          
+        }
+      });
+    }
+
+    if(lastFrame === 100) {
+      addLeaf(0);
+      addLeaf(1);
+
+      addFlower(0);
+      playSegments([100, 110]);
+    }
+
+    if(lastFrame === 110) {
+      addLeaf(2);
+      addLeaf(3);
+
+      addFlower(1);
+      playSegments([110, 120]);
+    }
+
+    if(lastFrame === 120) {
+      addLeaf(4);
+      addLeaf(5);
+
+      addFlower(2);
+      playSegments([120, 130]);
+    }
+
+    if(lastFrame === 130) {
+      addLeaf(6);
+      addLeaf(7);
+
+      addFlower(3);
+      playSegments([130, 140]);
+    }
+  }, [frames]);
+
   return (
     <div className="lottie-container">
       <div id="lottie-wrapper" style={{ right: "130px" }}>
@@ -119,119 +210,30 @@ const PlantAnimation = forwardRef((props, ref) => {
           ))}
         </div>
       </div>
-
-      {/* <div className="lottie-panel" style={{ display: "flex", flexDirection: "column", width: "15%" }}>
-        <button onClick={growPlant}>Grow Plant</button>
-        <button onClick={() => addLeaf(leaves.length)}>Add Leaf</button>
-        <button onClick={() => addFlower(flowers.length)}>Add Flower</button>
-        <button onClick={() => randomize(leaves, setLeaves, "falling")}>Falling Leaf</button>
-        <button onClick={() => randomize(flowers, setFlowers, "falling")}>Falling Flower</button>
-        <button onClick={() => randomize(leaves, setLeaves, "dead")}>Dead Leaf</button>
-        <button onClick={() => randomize(flowers, setFlowers, "dead")}>Dead Flower</button>
-
-        <button onClick={play}>Play</button>
-        <button onClick={pause}>Pause</button>
-        <button onClick={stop}>Stop</button>
-        
-        <button onClick={() => setSpeed(2)}>Double Speed</button>
-        <button onClick={() => setSpeed(0.5)}>Half Speed</button>
-      </div> */}
     </div>
   );
 });
 
 const leafTemplates = [
-  { 
-    width: 100, 
-    height: 150, 
-    left: 305, 
-    top: 340, 
-    transform: "rotate(-15deg) scaleX(-1)" 
-  },
-  { 
-    width: 100, 
-    height: 150, 
-    left: 375, 
-    top: 320, 
-    transform: "rotate(15deg)" 
-  },
-  { 
-    width: 100, 
-    height: 150, 
-    left: 300, 
-    top: 300, 
-    transform: "scaleX(-1)" 
-  },
-  { 
-    width: 100, 
-    height: 150, 
-    left: 375, 
-    top: 275, 
-    transform: "" 
-  },
-  { 
-    width: 80, 
-    height: 150, 
-    left: 320, 
-    top: 255, 
-    transform: "scaleX(-1)" 
-  },
-  { 
-    width: 80, 
-    height: 150, 
-    left: 375, 
-    top: 240, 
-    transform: "rotate(10deg)" 
-  },
-  { 
-    width: 70, 
-    height: 70, 
-    left: 335, 
-    top: 215, 
-    transform: "scaleX(-1)" 
-  },
-  { 
-    width: 70, 
-    height: 70, 
-    left: 385, 
-    top: 200, 
-    transform: "rotate(30deg)" 
-  },
+  { width: 100, height: 150, left: 305, top: 360, transform: "rotate(-15deg) scaleX(-1)" },
+  { width: 100, height: 150, left: 375, top: 340, transform: "rotate(15deg)" },
+
+  { width: 100, height: 150, left: 300, top: 320, transform: "scaleX(-1)" },
+  { width: 100, height: 150, left: 375, top: 295, transform: "" },
+
+  { width: 80, height: 150, left: 320, top: 275, transform: "scaleX(-1)" },
+  { width: 80, height: 150, left: 375, top: 260, transform: "rotate(10deg)" },
+
+  { width: 70, height: 70, left: 335, top: 235, transform: "scaleX(-1)" },
+  { width: 70, height: 70, left: 385, top: 220, transform: "rotate(30deg)" },
+
 ];
 
 const flowerTemplates = [
-  {
-    width: 300,
-    height: 300,
-    left: 230,
-    top: 255,
-    transform: 'rotate(10deg)',
-    className: 'flower'
-  },
-  {
-    width: 300,
-    height: 300,
-    left: 220,
-    top: 215,
-    transform: 'rotate(22deg) scaleX(-1)',
-    className: 'flower'
-  },
-  {
-    width: 300,
-    height: 300,
-    left: 245,
-    top: 165,
-    transform: '',
-    className: 'flower'
-  },
-  {
-    width: 300,
-    height: 300,
-    left: 265,
-    top: 100,
-    transform: 'rotate(-20deg)',
-    className: 'flower'
-  }
+  { width: 300, height: 300, left: 230, top: 255, transform: 'rotate(10deg)', className: 'flower' },
+  { width: 300, height: 300, left: 220, top: 215, transform: 'rotate(22deg) scaleX(-1)', className: 'flower' },
+  { width: 300, height: 300, left: 245, top: 165, transform: '', className: 'flower' },
+  { width: 300, height: 300, left: 265, top: 100, transform: 'rotate(-20deg)', className: 'flower' }
 ];
 
 export default PlantAnimation;
